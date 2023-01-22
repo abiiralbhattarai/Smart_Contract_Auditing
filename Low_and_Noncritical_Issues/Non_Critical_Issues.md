@@ -59,4 +59,4 @@
 
     Always create natspec for the functions. It will make ease in the development
 
-7.  ##
+7.  ## Signature Malleability of EVM's ecrecover()

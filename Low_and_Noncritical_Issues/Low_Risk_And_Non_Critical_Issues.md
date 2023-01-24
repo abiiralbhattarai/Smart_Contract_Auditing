@@ -138,3 +138,33 @@ The correct and clear error description explains to the user why the function re
 
 Donn't DO:
 require(success);
+
+14. ## Integer overflow by unsafe casting
+
+    Keep in mind that the version of solidity used, despite being greater than 0.8, does not prevent integer overflows during casting, it only does so in mathematical operations.
+
+    It is necessary to safely convert between the different numeric types.
+
+    Recommendation:
+
+    Use a safeCast from Open Zeppelin or increase the type length.
+
+    uint32(block.timestamp)
+
+15. ## Add indexes to events
+
+    Solidity indexes help dApps and users to filter and process the information provided by smart contracts. That is why adding indexes in values that may be interesting for the user improves the usability of the contract.
+
+    ```
+        event AuctionCreated(
+    ```
+
+-       uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
+
+*        uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
+
+  );
+
+  ```
+
+  ```

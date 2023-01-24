@@ -158,16 +158,10 @@
     Solidity indexes help dApps and users to filter and process the information provided by smart contracts. That is why adding indexes in values that may be interesting for the user improves the usability of the contract.
 
     ```
-        event AuctionCreated(
-    ```
-
-- uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
-
-+ uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
-
-);
-
-```
-
+ diff
+    event AuctionCreated(
+-       uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
++       uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
+    );
 
 ```

@@ -118,9 +118,11 @@
 
 11. ## Critical Address Changes Should Use Two-step Procedure
 
-The critical procedures should be two step process. See similar findings in previous Code4rena contests for reference: https://code4rena.com/reports/2022-06-illuminate/#2-critical-changes-should-use-two-step-procedure
+    The critical procedures should be two step process. See similar findings in previous Code4rena contests for reference:
 
-Recommended Mitigation Steps Lack of two-step procedure for critical operations leaves them error-prone. Consider adding two step procedure on the critical functions.
+    https://code4rena.com/reports/2022-06-illuminate/#2-critical-changes-should-use-two-step-procedure
+
+    Recommended Mitigation Steps Lack of two-step procedure for critical operations leaves them error-prone. Consider adding two step procedure on the critical functions.
 
 12. ## Owner can renounce Ownership
 
@@ -134,10 +136,10 @@ Recommended Mitigation Steps Lack of two-step procedure for critical operations 
 
 13. ## Require messages are too short and unclear
 
-The correct and clear error description explains to the user why the function reverts, but the error descriptions below in the project are not self-explanatory. These error descriptions are very important in the debug features of DApps.Error definitions should be added to the require block, not exceeding 32 bytes.
+    The correct and clear error description explains to the user why the function reverts, but the error descriptions below in the project are not self-explanatory. These error descriptions are very important in the debug features of DApps.Error definitions should be added to the require block, not exceeding 32 bytes.
 
-Donn't DO:
-require(success);
+    Donn't DO:
+    require(success);
 
 14. ## Integer overflow by unsafe casting
 
@@ -159,12 +161,13 @@ require(success);
         event AuctionCreated(
     ```
 
--       uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
+- uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
 
-*        uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
++ uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
 
-  );
+);
 
-  ```
+```
 
-  ```
+
+```

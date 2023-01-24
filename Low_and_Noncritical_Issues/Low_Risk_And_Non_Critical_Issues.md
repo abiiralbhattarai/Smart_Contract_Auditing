@@ -10,24 +10,24 @@
 
 ---
 
-### Low Risk Issues List
+### Low Risk And Non Critical Issues List
 
-| Number | Issues Details                                                      |    Context    |
-| :----: | :------------------------------------------------------------------ | :-----------: |
-| [L-01] | Draft Openzeppelin Dependencies                                     |       1       |
-| [L-02] | Stack too deep when compiling                                       |               |
-| [L-03] | Remove unused code                                                  |       2       |
-| [L-04] | Insufficient coverage                                               |               |
-| [L-05] | Critical Address Changes Should Use Two-step Procedure              |               |
-| [L-06] | Avoid variable names that can shade                                 |       1       |
-| [L-07] | Use a more recent version of Solidity                               | All contracts |
-| [L-08] | Owner can renounce Ownership                                        |       2       |
-| [L-09] | _Lock pragmas_ to specific compiler version                         |      24       |
-| [L-10] | Loss of precision due to rounding                                   |       1       |
-| [L-11] | Using vulnerable dependency of OpenZeppelin                         |       1       |
-| [L-12] | Use `safeTransferOwnership` instead of `transferOwnership` function |       2       |
+| Number | Issues Details                                                      |
+| :----: | :------------------------------------------------------------------ |
+|  [1]   | Not using the latest version of OpenZeppelin from dependencies      |
+|  [2]   | 0 address check                                                     |
+|  [3]   | Omissions in Events                                                 |
+|  [4]   | Insufficient coverage                                               |
+|  [5]   | Critical Address Changes Should Use Two-step Procedure              |
+|  [6]   | Avoid variable names that can shade                                 |
+|  [7]   | Use a more recent version of Solidity                               |
+|  [8]   | Owner can renounce Ownership                                        |
+|  [9]   | _Lock pragmas_ to specific compiler version                         |
+|  [10]  | Loss of precision due to rounding                                   |
+|  [11]  | Using vulnerable dependency of OpenZeppelin                         |
+|  [12]  | Use `safeTransferOwnership` instead of `transferOwnership` function |
 
-# Non Critical Issues
+# Low Risk And Non Critical Issues
 
 1.  ## Not using the latest version of OpenZeppelin from dependencies
 

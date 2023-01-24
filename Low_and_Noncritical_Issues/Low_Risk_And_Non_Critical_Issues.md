@@ -81,9 +81,9 @@
 
     ***
 
-    1. users and give them a chance to engage/exit protocol if they are not agreeable to the changes
+    - users and give them a chance to engage/exit protocol if they are not agreeable to the changes
 
-    2. team in case of compromised owner(s) and give them a chance to perform incident response.
+    - team in case of compromised owner(s) and give them a chance to perform incident response.
 
     Recommendation: Users may be surprised when critical parameters are changed. Furthermore, it can erode users' trust since they can’t be sure the protocol rules won’t be changed later on. Compromised owner keys may be used to change protocol addresses/parameters to benefit attackers. Without a time-delay, authorised owners have no time for any planned incident response.
 
@@ -149,7 +149,9 @@
 
     Recommendation:
 
-    Use a safeCast from Open Zeppelin or increase the type length.
+    -Use a safeCast from Open Zeppelin or increase the type length.
+
+    problem:
 
     uint32(block.timestamp)
 
@@ -157,11 +159,24 @@
 
     Solidity indexes help dApps and users to filter and process the information provided by smart contracts. That is why adding indexes in values that may be interesting for the user improves the usability of the contract.
 
-    ```
- diff
-    event AuctionCreated(
+```diff
+ event AuctionCreated(
 -       uint256 auctionId, address seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
 +       uint256 indexed auctionId, address indexed seller, AuctionParameters params, Timings timings, bytes encryptedPrivKey
-    );
+ );
 
 ```
+
+16. ## Testing all functions is best practice in terms of security criteria.
+
+    Some function test coverage is not found in test files
+
+17. ## Avoid variable names that can shade
+
+    With global variable names in the form of call{value: value } , argument name similarities can shade and negatively affect code readability.
+
+18. ## Use a more recent version of Solidity
+
+    For security, it is best practice to use the latest Solidity version.
+
+

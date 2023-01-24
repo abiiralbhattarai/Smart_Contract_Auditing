@@ -1,4 +1,33 @@
-## Non Critical Issues
+# Important Suggestion
+
+---
+
+- ### Generate perfect code headers every time
+
+  Description: I recommend using header for Solidity code layout and readability
+
+  https://github.com/transmissions11/headers
+
+---
+
+### Low Risk Issues List
+
+| Number | Issues Details                                                      |    Context    |
+| :----: | :------------------------------------------------------------------ | :-----------: |
+| [L-01] | Draft Openzeppelin Dependencies                                     |       1       |
+| [L-02] | Stack too deep when compiling                                       |               |
+| [L-03] | Remove unused code                                                  |       2       |
+| [L-04] | Insufficient coverage                                               |               |
+| [L-05] | Critical Address Changes Should Use Two-step Procedure              |               |
+| [L-06] | Avoid variable names that can shade                                 |       1       |
+| [L-07] | Use a more recent version of Solidity                               | All contracts |
+| [L-08] | Owner can renounce Ownership                                        |       2       |
+| [L-09] | _Lock pragmas_ to specific compiler version                         |      24       |
+| [L-10] | Loss of precision due to rounding                                   |       1       |
+| [L-11] | Using vulnerable dependency of OpenZeppelin                         |       1       |
+| [L-12] | Use `safeTransferOwnership` instead of `transferOwnership` function |       2       |
+
+# Non Critical Issues
 
 1.  ## Not using the latest version of OpenZeppelin from dependencies
 
@@ -179,4 +208,100 @@
 
     For security, it is best practice to use the latest Solidity version.
 
+19. ## Loss of precision due to rounding
 
+    Due to / PRECISION, users can avoid paying fee if claimed [][] result is below PRECISION
+
+```
+contracts/liquid-staking/GiantMevAndFeesPool.sol:
+ 199
+ 200:     /// @dev Internal re-usable method for setting claimed to max for msg.sender
+ 201:     function _setClaimedToMax(address _user) internal {
+ 202:         // New ETH stakers are not entitled to ETH earned by
+ 203:         claimed[_user][address(lpTokenETH)] = (accumulatedETHPerLPShare * lpTokenETH.balanceOf(_user)) / PRECISION;
+ 204:     }
+
+```
+
+20. ## Always Use vulnerable dependency of OpenZeppelin
+
+    Recommendation: Use patched versions
+
+21. ## Use safeTransferOwnership instead of transferOwnership function
+
+    Description: transferOwnership function is used to change Ownership
+
+    ```
+    ** import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+    93      /// @inheritdoc IOwnableSmartWallet
+    94:     function transferOwnership(address newOwner)
+    95:         public
+    96:         override(IOwnableSmartWallet, Ownable)
+    97:     {
+    98:         // Only the owner themselves or an address that is approved for transfers
+    99:         // is authorized to do this
+    100:         require(
+    101:             isTransferApproved(owner(), msg.sender),
+    102:             "OwnableSmartWallet: Transfer is not allowed"
+    103:         ); // F: [OSW-4]
+    104:
+    105:         // Approval is revoked, in order to avoid unintended transfer allowance
+    106:         // if this wallet ever returns to the previous owner
+    107:         if (msg.sender != owner()) {
+    108:             _setApproval(owner(), msg.sender, false); // F: [OSW-5]
+    109:         }
+    110:         _transferOwnership(newOwner); // F: [OSW-5]
+    111:     }
+
+    ```
+
+    Use a 2 structure transferOwnership which is safer. safeTransferOwnership, use it is more secure due to 2-stage ownership transfer.
+
+    Recommendation:
+
+    - Use [Ownable2Step.sol] (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable2Step.sol)
+
+22. ## Lines are too long
+
+    Usually lines in source code are limited to 80 characters. Today's screens are much larger so it's reasonable to stretch this in some cases. Since the files will most likely reside in GitHub, and GitHub starts using a scroll bar in all cases when the length is over 164 characters, the lines below should be split when they reach that length Reference: https://docs.soliditylang.org/en/v0.8.10/style-guide.html#maximum-line-length
+
+23. ## Empty blocks should be removed or Emit something
+
+    ```
+    166:     constructor() initializer {}
+    629:     receive() external payable {}
+
+    ```
+
+24. ## Missing Equivalence Checks in Setters
+
+    Description: Setter functions are missing checks to validate if the new value being set is the same as the current value already set in the contract. Such checks will showcase mismatches between on-chain and off-chain states.
+
+    Recommendation: This may hinder detecting discrepancies between on-chain and off-chain states leading to flawed assumptions of on-chain state and protocol behavior.
+
+    ```
+     function updateTicker(string calldata _newTicker) external onlyDAO {
+        require(bytes(_newTicker).length >= 3, "String must be 3-5 characters long");
+        require(bytes(_newTicker).length <= 5, "String must be 3-5 characters long");
+        require(numberOfKnots == 0, "Cannot change ticker once house is created");
+
+        stakehouseTicker = _newTicker;
+
+        emit NetworkTickerUpdated(_newTicker);
+    }
+
+    ```
+
+25. ## Lack of Event Emission For Critical Functions
+
+    ```
+    function updatePriorityStakingBlock(uint256 _endBlock) external onlyOwner {
+        updateAccruedETHPerShares();
+        priorityStakingEndBlock = _endBlock;
+    }
+
+    ```
+
+    Description: Several functions update critical parameters that are missing event emission. These should be performed to ensure tracking of changes of such critical parameters.
+
+    Recommendation: Consider adding events to functions that change critical parameters.

@@ -12,20 +12,34 @@
 
 ### Low Risk And Non Critical Issues List
 
-| Number | Issues                                                                                                                            |
-| :----: | :-------------------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies) |
-|   2.   | [0 address check ](#0-addresscheck)                                                                                               |
-|   3.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                       |
-|   4.   | Insufficient coverage                                                                                                             |
-|   5.   | Critical Address Changes Should Use Two-step Procedure                                                                            |
-|   6.   | Avoid variable names that can shade                                                                                               |
-|   7.   | Use a more recent version of Solidity                                                                                             |
-|   8.   | Owner can renounce Ownership                                                                                                      |
-|   9.   | _Lock pragmas_ to specific compiler version                                                                                       |
-|  10.   | Loss of precision due to rounding                                                                                                 |
-|  11.   | Using vulnerable dependency of OpenZeppelin                                                                                       |
-|  12.   | Use `safeTransferOwnership` instead of `transferOwnership` function                                                               |
+| Number | Issues                                                                                                                                        |
+| :----: | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies)             |
+|   2.   | [0 address check ](#0-address-check)                                                                                                          |
+|   3.   | [Omissions in Events](#omissions-in-Events)                                                                                                   |
+|   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                                   |
+|   5.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                               |
+|   6.   | [NatSpec is missing](#natSpec-is-missing)                                                                                                     |
+|   7.   | [Signature Malleability of EVM's ecrecover()](<#signature-malleability-of-evm's-ecrecover())                                                  |
+|   8.   | [Stop using this one](#stop-using-this-one)                                                                                                   |
+|   9.   | [Missing Time locks](#missing-time-locks)                                                                                                     |
+|  10.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                                   |
+|  11.   | [Critical Address Changes Should Use Two-step Procedure](#critical-address-changes-should-use-two-step-procedure)                             |
+|  12.   | [Owner can renounce Ownership](#owner-can-renounce-ownership)                                                                                 |
+|  13.   | [ Require messages are too short and unclear](#require-messages-are-too-short-and-unclear)                                                    |
+|  14.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                                    |
+|  15.   | [Add indexes to events](#add-indexes-to-events)                                                                                               |
+|  16.   | [Testing all functions is best practice in terms of security criteria](#testing-all-functions-is-best-practice-in-terms-of-security-criteria) |
+|  17.   | [ Avoid variable names that can shade](#avoid-variable-names-that-can-shade)                                                                  |
+|  18.   | [Use a more recent version of Solidity](#use-a-more-recent-version-of-solidity)                                                               |
+|  19.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                                      |
+|  21.   | [Use safeTransferOwnership instead of transferOwnership function](#use-safetransferownership-instead-of-transferownership-function)           |
+|  22.   | [Lines are too long](#lines-are-too-long)                                                                                                     |
+|  23.   | [ Empty blocks should be removed or Emit something](#empty-blocks-should-be-removed-or-emit-something)                                        |
+|  24.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                              |
+|  25.   | [ Lack of Event Emission For Critical Functions](#lack-of-event-emission-for-critical-functions)                                              |
+|  26.   |                                                                                                                                               |
+|  27.   |                                                                                                                                               |
 
 # Low Risk And Non Critical Issues
 
@@ -100,9 +114,10 @@
 
     ***
 
-8.  ## Stop using v != 27 && v != 28 or v == 27 || v == 28
+8.  ## Stop using this one
 
-    See this for reference : https://twitter.com/alexberegszaszi/status/1534461421454606336?s=20&t=H0Dv3ZT2bicx00hLWJk7Fg
+    - Stop using v != 27 && v != 28 or v == 27 || v == 28
+      See this for reference : https://twitter.com/alexberegszaszi/status/1534461421454606336?s=20&t=H0Dv3ZT2bicx00hLWJk7Fg
 
 9.  ## Missing Time locks
 

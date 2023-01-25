@@ -12,20 +12,20 @@
 
 ### Low Risk And Non Critical Issues List
 
-| Number | Issues                                                                                                                                   |
-| :----: | :--------------------------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [** Not using the latest version of OpenZeppelin from dependencies **] (Not-using-the-latest-version-of-OpenZeppelin-from-dependencies ) |
-|  [2]   | 0 address check                                                                                                                          |
-|  [3]   | Omissions in Events                                                                                                                      |
-|  [4]   | Insufficient coverage                                                                                                                    |
-|  [5]   | Critical Address Changes Should Use Two-step Procedure                                                                                   |
-|  [6]   | Avoid variable names that can shade                                                                                                      |
-|  [7]   | Use a more recent version of Solidity                                                                                                    |
-|  [8]   | Owner can renounce Ownership                                                                                                             |
-|  [9]   | _Lock pragmas_ to specific compiler version                                                                                              |
-|  [10]  | Loss of precision due to rounding                                                                                                        |
-|  [11]  | Using vulnerable dependency of OpenZeppelin                                                                                              |
-|  [12]  | Use `safeTransferOwnership` instead of `transferOwnership` function                                                                      |
+| Number | Issues                                                                                                                             |
+| :----: | :--------------------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [Not using the latest version of OpenZeppelin from dependencies] (#not-using-the-latest-version-of-openzeppelin-from-dependencies) |
+|   2.   | [0 address check ] (#0-addresscheck)                                                                                               |
+|   3.   | [Add parameter to Event-Emit] (# add-parameter-to-event-emit)                                                                      |
+|   4.   | Insufficient coverage                                                                                                              |
+|   5.   | Critical Address Changes Should Use Two-step Procedure                                                                             |
+|   6.   | Avoid variable names that can shade                                                                                                |
+|   7.   | Use a more recent version of Solidity                                                                                              |
+|   8.   | Owner can renounce Ownership                                                                                                       |
+|   9.   | _Lock pragmas_ to specific compiler version                                                                                        |
+|  10.   | Loss of precision due to rounding                                                                                                  |
+|  11.   | Using vulnerable dependency of OpenZeppelin                                                                                        |
+|  12.   | Use `safeTransferOwnership` instead of `transferOwnership` function                                                                |
 
 # Low Risk And Non Critical Issues
 

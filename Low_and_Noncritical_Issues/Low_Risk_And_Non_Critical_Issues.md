@@ -15,12 +15,12 @@
 | Number | Issues                                                                                                                                        |
 | :----: | :-------------------------------------------------------------------------------------------------------------------------------------------- |
 |   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies)             |
-|   2.   | [0 address check ](#0-address-check)                                                                                                          |
+|   2.   | [zero address check ](#zero-address-check)                                                                                                    |
 |   3.   | [Omissions in Events](#omissions-in-Events)                                                                                                   |
 |   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                                   |
 |   5.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                               |
 |   6.   | [NatSpec is missing](#natSpec-is-missing)                                                                                                     |
-|   7.   | [Signature Malleability of EVM's ecrecover()](<#signature-malleability-of-evm's-ecrecover())                                                  |
+|   7.   | [Signature Malleability of EVM's ecrecover()](#signature-malleability-of-evms-ecrecover)                                                      |
 |   8.   | [Stop using this one](#stop-using-this-one)                                                                                                   |
 |   9.   | [Missing Time locks](#missing-time-locks)                                                                                                     |
 |  10.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                                   |
@@ -38,8 +38,22 @@
 |  23.   | [ Empty blocks should be removed or Emit something](#empty-blocks-should-be-removed-or-emit-something)                                        |
 |  24.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                              |
 |  25.   | [ Lack of Event Emission For Critical Functions](#lack-of-event-emission-for-critical-functions)                                              |
-|  26.   |                                                                                                                                               |
-|  27.   |                                                                                                                                               |
+|  26.   | [Add missing @param information](#add-missing-param-information)                                                                              |
+|  27.   | [Named return variables not used though its defined](#named-return-variables-not-used-though-its-defined)                                     |
+|  28.   | [Constant should be defined rather than using magic numbers](#constant-should-be-defined-rather-than-using-magic-numbers)                     |
+|  29.   | [use order of functions](#use-order-of-functions)                                                                                             |
+|  30.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                                |
+|  31.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                                 |
+|  32.   |                                                                                                                                               |
+|  33.   |                                                                                                                                               |
+|  34.   |                                                                                                                                               |
+|  35.   |                                                                                                                                               |
+|  36.   |                                                                                                                                               |
+|  37.   |                                                                                                                                               |
+|  38.   |                                                                                                                                               |
+|  39.   |                                                                                                                                               |
+|  40.   |                                                                                                                                               |
+|  41.   |                                                                                                                                               |
 
 # Low Risk And Non Critical Issues
 
@@ -47,7 +61,7 @@
 
     Use the latest version of openZeppelin
 
-2.  ## 0 address check
+2.  ## zero address check
 
     Do zero address check
 
@@ -117,11 +131,15 @@
 8.  ## Stop using this one
 
     - Stop using v != 27 && v != 28 or v == 27 || v == 28
-      See this for reference : https://twitter.com/alexberegszaszi/status/1534461421454606336?s=20&t=H0Dv3ZT2bicx00hLWJk7Fg
+
+      See this for reference :
+      https://twitter.com/alexberegszaszi/status/1534461421454606336?s=20&t=H0Dv3ZT2bicx00hLWJk7Fg
 
 9.  ## Missing Time locks
 
     Description: When critical parameters of systems need to be changed, it is required to broadcast the change via event emission and recommended to enforce the changes after a time-delay. This is to allow system users to be aware of such critical changes and give them an opportunity to exit or adjust their engagement with the system accordingly. None of the onlyOwner functions that change critical protocol addresses/parameters have a timelock for a time-delayed change to alert:
+
+    - Because of human error it's possible to set a new invalid owner. When you want to change the owner's address it's better to propose a new owner, and then accept this ownership with the new wallet.
 
     ***
 
@@ -162,11 +180,19 @@
 
 11. ## Critical Address Changes Should Use Two-step Procedure
 
-    The critical procedures should be two step process. See similar findings in previous Code4rena contests for reference:
+        The critical procedures should be two step process. See similar findings in previous Code4rena contests for reference:
 
-    https://code4rena.com/reports/2022-06-illuminate/#2-critical-changes-should-use-two-step-procedure
+        https://code4rena.com/reports/2022-06-illuminate/#2-critical-changes-should-use-two-step-procedure
 
-    Recommended Mitigation Steps Lack of two-step procedure for critical operations leaves them error-prone. Consider adding two step procedure on the critical functions.
+        Recommended Mitigation Steps Lack of two-step procedure for critical operations leaves them error-prone. Consider adding two step procedure on the critical functions.
+
+        ***
+
+        The following contracts have a function that allows them an admin to change it to a different address. If the admin accidentally uses an invalid address for which they do not have the private key, then the system gets locked.
+
+        It is important to have two steps admin change where the first is announcing a pending new admin and the new address should then claim its ownership.
+
+        ***
 
 12. ## Owner can renounce Ownership
 
@@ -320,3 +346,104 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
     Description: Several functions update critical parameters that are missing event emission. These should be performed to ensure tracking of changes of such critical parameters.
 
     Recommendation: Consider adding events to functions that change critical parameters.
+
+26. ## Add missing @param information
+    Some parameters have not been commented, which reflects that the logic has been updated but not the documentation, it is advisable that developers update both at the same time to avoid the code being out of sync with the project documentation.
+
+```diff
+   /// @param baseToken The ERC20 to be sold by the seller
+    /// @param quoteToken The ERC20 to be bid by the bidders
+    /// @param reserveQuotePerBase Minimum price that bids will be filled at
+    /// @param totalBaseAmount Max amount of `baseToken` to be auctioned
+    /// @param minimumBidQuote Minimum quote amount a bid can buy
++   /// @param merkleRoot seller's merkleRoot for whitelist bidders
+    /// @param pubKey On-chain storage of seller's ephemeral public key
+    struct AuctionParameters {
+        address baseToken;
+        address quoteToken;
+        uint256 reserveQuotePerBase;
+        uint128 totalBaseAmount;
+        uint128 minimumBidQuote;
+        bytes32 merkleRoot;
+        ECCMath.Point pubKey;
+    }
+
+```
+
+27. # Named return variables not used though its defined
+
+    When Named return variable are declared they should be used inside the function instead of the return statement or if not they should be removed to avoid confusion.
+
+    ```
+    function tokensAvailableForWithdrawal(uint256 auctionId, uint128 baseAmount)
+        public
+        view
+        returns (uint128 tokensAvailable)
+    {
+        Auction storage a = idToAuction[auctionId];
+        return CommonTokenMath.tokensAvailableAtTime(
+            a.timings.vestingStartTimestamp,
+            a.timings.vestingEndTimestamp,
+            uint32(block.timestamp),
+            a.timings.cliffPercent,
+            baseAmount
+        );
+    }
+
+    ```
+
+28. # Constant should be defined rather than using magic numbers
+
+    It is best practice to use constant variables rather than hex/numeric literal values to make the code easier to understand and maintain, but if they are used those numbers should be well docummented.
+
+    ```
+    else if (block.timestamp > a.timings.endTimestamp + 24 hours)
+
+    (bool res, bytes memory ret) = address(0x07).staticcall{gas: 6000}(data);
+
+    ```
+
+29. # use order of functions
+
+    The solidity documentation recommends the following order for functions:
+
+    - constructor
+    - receive function (if exists)
+    - fallback function (if exists)
+    - external
+    - public
+    - internal
+    - private
+    - Within a grouping, place the view and pure functions last
+
+30. # Avoid using tx.origin
+
+    tx.origin is a global variable in Solidity that returns the address of the account that sent the transaction.
+
+    Using the variable could make a contract vulnerable if an authorized account calls a malicious contract. You can impersonate a user using a third party contract.
+
+    This can make it easier to create a vault on behalf of another user with an external administrator (by receiving it as an argument).
+
+31. # Mixing and Outdated compiler
+
+    Note that mixing pragma is not recommended. Because different compiler versions have different meanings and behaviors, it also significantly raises maintenance costs. As a result, depending on the compiler version selected for any given file, deployed contracts may have security issues
+
+    - 0.8.14:
+
+      ABI Encoder: When ABI-encoding values from calldata that contain nested arrays, correctly validate the nested array length against calldatasize() in all cases.
+      Override Checker: Allow changing data location for parameters only when overriding external functions.
+
+    - 0.8.15
+
+      Code Generation: Avoid writing dirty bytes to storage when copying bytes arrays.
+      Yul Optimizer: Keep all memory side-effects of inline assembly blocks.
+
+    - 0.8.16
+
+      Code Generation: Fix data corruption that affected ABI-encoding of calldata values represented by tuples: structs at any nesting level; argument lists of external functions, events and errors; return value lists of external functions. The 32 leading bytes of the first dynamically-encoded value in the tuple would get zeroed when the last component contained a statically-encoded array.
+
+    - 0.8.17
+
+      Yul Optimizer: Prevent the incorrect removal of storage writes before calls to Yul functions that conditionally terminate the external EVM call.
+
+32. 

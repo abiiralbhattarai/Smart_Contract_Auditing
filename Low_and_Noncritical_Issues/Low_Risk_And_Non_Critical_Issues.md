@@ -44,8 +44,8 @@
 |  29.   | [use order of functions](#use-order-of-functions)                                                                                             |
 |  30.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                                |
 |  31.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                                 |
-|  32.   |                                                                                                                                               |
-|  33.   |                                                                                                                                               |
+|  32.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                                         |
+|  33.   | [Choose Specific Compiler Version Pragma](#choose-specific-compiler-version-pragma)                                                           |
 |  34.   |                                                                                                                                               |
 |  35.   |                                                                                                                                               |
 |  36.   |                                                                                                                                               |
@@ -446,4 +446,21 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
 
       Yul Optimizer: Prevent the incorrect removal of storage writes before calls to Yul functions that conditionally terminate the external EVM call.
 
-32. 
+32. # Lack of checks supportsInterface
+
+    The EIP-165 standard helps detect that a smart contract implements the expected logic, prevents human error when configuring smart contract bindings, so it is recommended to check that the received argument is a contract and supports the expected interface.
+
+    - Reference:
+
+      https://eips.ethereum.org/EIPS/eip-165
+
+33. # Choose Specific Compiler Version Pragma
+
+    Avoid floating pragmas for non-library contracts. While floating pragmas make sense for libraries to allow them to be included with multiple different versions of applications, it may be a security risk for application implementations. A known vulnerable compiler version may accidentally be selected or security tools might fall-back to an older compiler version ending up checking a different EVM compilation that is ultimately deployed on the blockchain. It is recommended to pin to a concrete compiler version,
+
+    e.g. 'pragma solidity ^0.8.0;' -> 'pragma solidity 0.8.4;"
+
+34. # ERC20 transfer / transferFrom with not checked return value
+
+    - Impact
+      Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.

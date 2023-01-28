@@ -29,7 +29,7 @@
 |  13.   | [ Require messages are too short and unclear](#require-messages-are-too-short-and-unclear)                                          |
 |  14.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                          |
 |  15.   | [Add indexes to events](#add-indexes-to-events)                                                                                     |
-|  16.   | [It is best to test all functions]()                                                                                                |
+|  16.   | [It is best to test all functions](#it-is-best-to-test-all-functions)                                                               |
 |  17.   | [ Avoid variable names that can shade](#avoid-variable-names-that-can-shade)                                                        |
 |  18.   | [Use a more recent version of Solidity](#use-a-more-recent-version-of-solidity)                                                     |
 |  19.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                            |

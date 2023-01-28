@@ -464,3 +464,8 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
 
     - Impact
       Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.
+
+35. # ERC20 transfer / transferFrom with not checked return value
+
+    - Impact
+      Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.

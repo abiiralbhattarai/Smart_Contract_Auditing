@@ -7,6 +7,7 @@
    1. A replay attack is when a signed message is reused to claim authorization for a second action. To avoid replay attacks we use the same technique as in Ethereum transactions themselves, a so-called nonce
 
    ***
+    
 
 2. # EOA
 

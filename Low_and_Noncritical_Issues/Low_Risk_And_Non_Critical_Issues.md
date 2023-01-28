@@ -12,48 +12,48 @@
 
 ### Low Risk And Non Critical Issues List
 
-| Number | Issues                                                                                                                                        |
-| :----: | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies)             |
-|   2.   | [zero address check ](#zero-address-check)                                                                                                    |
-|   3.   | [Omissions in Events](#omissions-in-Events)                                                                                                   |
-|   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                                   |
-|   5.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                               |
-|   6.   | [NatSpec is missing](#natSpec-is-missing)                                                                                                     |
-|   7.   | [Signature Malleability of EVM's ecrecover()](#signature-malleability-of-evms-ecrecover)                                                      |
-|   8.   | [Stop using this one](#stop-using-this-one)                                                                                                   |
-|   9.   | [Missing Time locks](#missing-time-locks)                                                                                                     |
-|  10.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                                   |
-|  11.   | [Critical Address Changes Should Use Two-step Procedure](#critical-address-changes-should-use-two-step-procedure)                             |
-|  12.   | [Owner can renounce Ownership](#owner-can-renounce-ownership)                                                                                 |
-|  13.   | [ Require messages are too short and unclear](#require-messages-are-too-short-and-unclear)                                                    |
-|  14.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                                    |
-|  15.   | [Add indexes to events](#add-indexes-to-events)                                                                                               |
-|  16.   | [Testing all functions is best practice in terms of security criteria](#testing-all-functions-is-best-practice-in-terms-of-security-criteria) |
-|  17.   | [ Avoid variable names that can shade](#avoid-variable-names-that-can-shade)                                                                  |
-|  18.   | [Use a more recent version of Solidity](#use-a-more-recent-version-of-solidity)                                                               |
-|  19.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                                      |
-|  21.   | [Use safeTransferOwnership instead of transferOwnership function](#use-safetransferownership-instead-of-transferownership-function)           |
-|  22.   | [Lines are too long](#lines-are-too-long)                                                                                                     |
-|  23.   | [ Empty blocks should be removed or Emit something](#empty-blocks-should-be-removed-or-emit-something)                                        |
-|  24.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                              |
-|  25.   | [ Lack of Event Emission For Critical Functions](#lack-of-event-emission-for-critical-functions)                                              |
-|  26.   | [Add missing @param information](#add-missing-param-information)                                                                              |
-|  27.   | [Named return variables not used though its defined](#named-return-variables-not-used-though-its-defined)                                     |
-|  28.   | [Constant should be defined rather than using magic numbers](#constant-should-be-defined-rather-than-using-magic-numbers)                     |
-|  29.   | [use order of functions](#use-order-of-functions)                                                                                             |
-|  30.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                                |
-|  31.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                                 |
-|  32.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                                         |
-|  33.   | [Choose Specific Compiler Version Pragma](#choose-specific-compiler-version-pragma)                                                           |
-|  34.   |                                                                                                                                               |
-|  35.   |                                                                                                                                               |
-|  36.   |                                                                                                                                               |
-|  37.   |                                                                                                                                               |
-|  38.   |                                                                                                                                               |
-|  39.   |                                                                                                                                               |
-|  40.   |                                                                                                                                               |
-|  41.   |                                                                                                                                               |
+| Number | Issues                                                                                                                              |
+| :----: | :---------------------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies)   |
+|   2.   | [zero address check ](#zero-address-check)                                                                                          |
+|   3.   | [Omissions in Events](#omissions-in-Events)                                                                                         |
+|   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                         |
+|   5.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                     |
+|   6.   | [NatSpec is missing](#natSpec-is-missing)                                                                                           |
+|   7.   | [Signature Malleability of EVM's ecrecover()](#signature-malleability-of-evms-ecrecover)                                            |
+|   8.   | [Stop using this one](#stop-using-this-one)                                                                                         |
+|   9.   | [Missing Time locks](#missing-time-locks)                                                                                           |
+|  10.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                         |
+|  11.   | [Critical Address Changes Should Use Two-step Procedure](#critical-address-changes-should-use-two-step-procedure)                   |
+|  12.   | [Owner can renounce Ownership](#owner-can-renounce-ownership)                                                                       |
+|  13.   | [ Require messages are too short and unclear](#require-messages-are-too-short-and-unclear)                                          |
+|  14.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                          |
+|  15.   | [Add indexes to events](#add-indexes-to-events)                                                                                     |
+|  16.   | [It is best to test all functions]()                                                                                                |
+|  17.   | [ Avoid variable names that can shade](#avoid-variable-names-that-can-shade)                                                        |
+|  18.   | [Use a more recent version of Solidity](#use-a-more-recent-version-of-solidity)                                                     |
+|  19.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                            |
+|  21.   | [Use safeTransferOwnership instead of transferOwnership function](#use-safetransferownership-instead-of-transferownership-function) |
+|  22.   | [Lines are too long](#lines-are-too-long)                                                                                           |
+|  23.   | [ Empty blocks should be removed or Emit something](#empty-blocks-should-be-removed-or-emit-something)                              |
+|  24.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                    |
+|  25.   | [ Lack of Event Emission For Critical Functions](#lack-of-event-emission-for-critical-functions)                                    |
+|  26.   | [Add missing @param information](#add-missing-param-information)                                                                    |
+|  27.   | [Named return variables not used though its defined](#named-return-variables-not-used-though-its-defined)                           |
+|  28.   | [Constant should be defined rather than using magic numbers](#constant-should-be-defined-rather-than-using-magic-numbers)           |
+|  29.   | [use order of functions](#use-order-of-functions)                                                                                   |
+|  30.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                      |
+|  31.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                       |
+|  32.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                               |
+|  33.   | [Choose Specific Compiler Version Pragma](#choose-specific-compiler-version-pragma)                                                 |
+|  34.   |                                                                                                                                     |
+|  35.   |                                                                                                                                     |
+|  36.   |                                                                                                                                     |
+|  37.   |                                                                                                                                     |
+|  38.   |                                                                                                                                     |
+|  39.   |                                                                                                                                     |
+|  40.   |                                                                                                                                     |
+|  41.   |                                                                                                                                     |
 
 # Low Risk And Non Critical Issues
 
@@ -237,9 +237,10 @@
 
 ```
 
-16. ## Testing all functions is best practice in terms of security criteria.
+16. ## It is best to test all functions
 
-    Some function test coverage is not found in test files
+    - Testing all functions is best practice in terms of security criteria.
+    - Some function test coverage is not found in test files
 
 17. ## Avoid variable names that can shade
 

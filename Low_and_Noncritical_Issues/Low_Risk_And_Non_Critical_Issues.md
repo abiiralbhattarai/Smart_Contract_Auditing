@@ -46,8 +46,8 @@
 |  31.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                       |
 |  32.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                               |
 |  33.   | [Choose Specific Compiler Version Pragma](#choose-specific-compiler-version-pragma)                                                 |
-|  34.   |                                                                                                                                     |
-|  35.   |                                                                                                                                     |
+|  34.   | [ERC20 transfer / transferFrom with not checked return value](#erc20-transfer--transferfrom-with-not-checked-return-value)          |
+|  35.   | [Prevent div by 0](#prevent-div-by-0)                                                                                               |
 |  36.   |                                                                                                                                     |
 |  37.   |                                                                                                                                     |
 |  38.   |                                                                                                                                     |
@@ -466,7 +466,14 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
     - Impact
       Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.
 
-35. # ERC20 transfer / transferFrom with not checked return value
+35. # Prevent div by 0
 
     - Impact
-      Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.
+      On several locations in the code precautions are not being taken to not divide by 0, this would revert the code.
+    - Recommended Mitigation Steps
+      Recommend making sure division by 0 won’t occur by checking the variables beforehand and handling this edge case.
+      ***
+      - uint minimumCollateral = debt _ 1 ether / oracle.getPrice(address(collateral), collateralFactorBps) _ 10000 / collateralFactorBps;//
+      - uint liquidationFee = repaidDebt _ 1 ether / price _ liquidationFeeBps / 10000;
+
+36. #

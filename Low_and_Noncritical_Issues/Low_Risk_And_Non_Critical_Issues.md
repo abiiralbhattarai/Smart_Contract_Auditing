@@ -14,7 +14,7 @@
 
 | Number | Issues                                                                                                                              |
 | :----: | :---------------------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [Not using the latest version of OpenZeppelin from dependenciesz(#not-using-the-latest-version-of-openzeppelin-from-dependencies)   |
+|   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies)   |
 |   2.   | [zero address check ](#zero-address-check)                                                                                          |
 |   3.   | [Omissions in Events](#omissions-in-Events)                                                                                         |
 |   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                         |
@@ -397,20 +397,12 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
 
     It is best practice to use constant variables rather than hex/numeric literal values to make the code easier to understand and maintain, but if they are used those numbers should be well docummented.
 
-    - Summary
-      Magic numbers are hardcoded numbers used in the code which are ambiguous to their intended purpose. These should be replaced with constants to make code more readable and maintainable.
-    - Details
-      Values are hardcoded and would be more readable and maintainable if declared as a constant
-
     ```
     else if (block.timestamp > a.timings.endTimestamp + 24 hours)
 
     (bool res, bytes memory ret) = address(0x07).staticcall{gas: 6000}(data);
 
     ```
-
-    - Mitigation
-      Replace magic hardcoded numbers with declared constants.
 
 29. # use order of functions
 
@@ -480,12 +472,8 @@ contracts/liquid-staking/GiantMevAndFeesPool.sol:
       On several locations in the code precautions are not being taken to not divide by 0, this would revert the code.
     - Recommended Mitigation Steps
       Recommend making sure division by 0 won’t occur by checking the variables beforehand and handling this edge case.
-
       ***
-
       - uint minimumCollateral = debt _ 1 ether / oracle.getPrice(address(collateral), collateralFactorBps) _ 10000 / collateralFactorBps;//
       - uint liquidationFee = repaidDebt _ 1 ether / price _ liquidationFeeBps / 10000;
-
-      ***
 
 36. #

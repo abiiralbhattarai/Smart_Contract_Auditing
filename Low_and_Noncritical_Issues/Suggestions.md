@@ -3,8 +3,8 @@
 | Number | Issues                                                                                                  |
 | :----: | :------------------------------------------------------------------------------------------------------ |
 |   1.   | [Generate perfect code headers every time](#generate-perfect-code-headers-every-time)                   |
-|   1.   | [Make the Test Context with Solidity](#make-the-test-context-with-solidity)                             |
-|   1.   | [Project Upgrade and Stop Scenario should be there](#project-upgrade-and-stop-scenario-should-be-there) |
+|   2.   | [Make the Test Context with Solidity](#make-the-test-context-with-solidity)                             |
+|   3.   | [Project Upgrade and Stop Scenario should be there](#project-upgrade-and-stop-scenario-should-be-there) |
 
 ---
 

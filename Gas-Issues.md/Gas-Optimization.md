@@ -363,7 +363,7 @@ delete activeProposal;
 
 ```
 
-41. # Bytes constant are cheaper than string constants
+41. ### Bytes constant are cheaper than string constants
 
     If the string can fit into 32 bytes, then bytes32 is cheaper than string. string is a dynamically sized-type, which has current limitations in Solidity compared to a statically sized variable.
 
@@ -378,7 +378,7 @@ delete activeProposal;
 * bytes32 constant public VERSION = '3.0.0';
 ```
 
-42. # If a variable is set in the constructor and never modified afterwards, marking it as immutable
+42. ### If a variable is set in the constructor and never modified afterwards, marking it as immutable
     If a variable is set in the constructor and never modified afterwards, marking it as immutable can save a storage slot - 20,000 gas. This also saves 97 gas on every read access of the variable.
 
 ```
@@ -391,27 +391,42 @@ delete activeProposal;
 
 ```
 
-43. ## It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
+43. #s## It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
 
 ```diff
 - for (uint256 i = 0; i < \_tokens.length; i++) {
 + for (uint256 i; i < \_tokens.length; ++i) {
 ```
 
-44. ## Internal functions only called once can be inlined to save gas
+44. ### Internal functions only called once can be inlined to save gas
 
     Not inlining costs 20 to 40 gas because of two extra JUMP instructions and additional stack operations needed for function calls.
 
-45. ## Cache the length of arrays in loops ~6 gas per iteration
+45. ### Cache the length of arrays in loops ~6 gas per iteration
 
     Reading array length at each iteration of the loop takes 6 gas (3 for mload and 3 to place memory_offset) in the stack.
 
-46. ## Use selfbalance() instead of address(this).balance
+46. ### Use selfbalance() instead of address(this).balance
 
     Use assembly when getting a contract's balance of ETH.
 
     You can use selfbalance() instead of address(this).balance when getting your contract's balance of ETH to save gas. Additionally, you can use balance(address) instead of address.balance() when getting an external contract's balance of ETH.
 
-47. # Use assembly to check for address(0)
+47. ### Use assembly to check for address(0)
+
 - saves 6 gas per instance
 
+48. ### TERNARY OPERATION IS CHEAPER THAN IF-ELSE STATEMENT
+    - use ternary operation whenever possible. Using ternary operation will save modest amounts of gas.
+
+```diff
+function BitMath {
+         uint8 _bit,
+         bool _rightSide
+     ) internal pure returns (uint256) {
+-        if (_rightSide) {
+-            return closestBitRight(_integer, _bit - 1);
+-        } else return closestBitLeft(_integer, _bit + 1);
++        return _rightSide ? closestBitRight(_integer, _bit - 1) : closestBitLeft(_integer, _bit + 1);
+     }
+```

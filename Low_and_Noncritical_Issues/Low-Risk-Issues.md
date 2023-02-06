@@ -234,3 +234,34 @@
 15. ## Always Use non-vulnerable dependency of OpenZeppelin
 
     - Recommendation: Use patched versions
+
+16. ## Missing sanity checks on to addresses
+
+when the public/external functions require an address to as a parameter to which to send either tokens or ETH, the protocol should check that if the to address is contract then that contract should be able to manage ERC20, otherwise funds would be lost.
+
+```
+   function swapAVAXForExactTokens(
+        uint256 _amountOut,
+        uint256[] memory _pairBinSteps,
+        IERC20[] memory _tokenPath,
+        address _to,
+        uint256 _deadline
+    )
+
+```
+
+17. ## Add non-zero address checks for address arguments in constructors
+
+check address value for zero
+
+```
+ constructor(
+       ILBFactory _factory,
+       IJoeFactory _oldFactory,
+       IWAVAX _wavax
+   ) {
+       factory = _factory;
+       oldFactory = _oldFactory;
+       wavax = _wavax;
+   }
+```

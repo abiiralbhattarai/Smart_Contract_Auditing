@@ -265,3 +265,13 @@ check address value for zero
        wavax = _wavax;
    }
 ```
+
+18. ## Use \_safeMint instead of \_mint
+
+    According to openzepplin's ERC721, the use of \_mint is discouraged, use \_safeMint whenever possible.
+
+    - https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#ERC721-_mint-address-uint256-
+
+19. ## Missing Contract-existence Checks Before Low-level Calls
+    - Low-level calls return success if there is no code present at the specified address.
+    - In addition to the zero-address checks, add a check to verify that <address>.code.length > 0

@@ -88,5 +88,39 @@ The steps to run the network are as follows:
 
     - Old blocks can then be compacted by stubbing off branches of the tree. The interior hashes do not need to be stored.
 
-8. ### Simplified Payment Verification
+8.  ### Simplified Payment Verification
 
+    - It is possible to verify payments without running a full network node.
+    - A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in.
+
+    - He can't check the transaction for himself, but by linking it to a place in the chain, he can see that a network node has accepted it, and blocks added after it further confirm the network has accepted it.
+
+9.  ### Combining and Splitting Value
+
+    - Although it would be possible to handle coins individually, it would be unwieldy to make a separate transaction for every cent in a transfer
+    - To allow value to be split and combined, transactions contain multiple inputs and outputs.
+    - Normally there will be either a single input from a larger previous transaction or multiple inputs combining smaller amounts, and at most two outputs: one for the payment, and one returning the change, if any, back to the sender.
+    - There is never the need to extract a complete standalone copy of a transaction's history.
+
+10. ### Privacy
+
+    - The traditional banking model achieves a level of privacy by limiting access to information to the parties involved and the trusted third party.
+
+    - Privacy can still be maintained by breaking the flow of information in another place: by keeping public keys anonymous.
+
+    - As an additional firewall, a new key pair should be used for each transaction to keep them from being linked to a common owner.
+
+11. ### Calculations
+
+    - We consider the scenario of an attacker trying to generate an alternate chain faster than the honest chain.
+
+    - Even if this is accomplished, it does not throw the system open to arbitrary changes, such as creating value out of thin air or taking money that never belonged to the attacker.
+
+    - The race between the honest chain and an attacker chain can be characterized as a Binomial Random Walk. The success event is the honest chain being extended by one block, increasing its lead by +1, and the failure event is the attacker's chain being extended by one block, reducing the gap by -1.
+
+12. ### Conclusion
+
+    - We started with the usual framework of coins made from digital signatures, which provides strong control of ownership, but is incomplete without a way to prevent double-spending.
+    - Nodes work all at once with little coordination
+    - Nodes can leave and rejoin the network at will, accepting the proof-of-work chain as proof of what happened while they were gone.
+    - Nodes vote with their CPU power, expressing their acceptance of valid blocks by working on extending them and rejecting invalid blocks by refusing to work on them.

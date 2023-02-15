@@ -2,6 +2,15 @@
 
 ---
 
+### EVM
+
+- Ethereum can be viewed as a transaction-based state machine.
+- The world state is a mapping between address and account state.
+- An account is an object in the world state. It  is a mapping between address and account state.
+- A transaction is a single cryptographically-signed instruction.
+- EVM is big endian order (network byte order).
+  (Big-endian is an order in which the "big end" (most significant value in the sequence) is stored first, at the lowest storage address.)
+
 ### Basics
 
 - Smart contracts are just computer programs, and we can say that Ethereum contracts are smart contracts that run on the Ethereum Virtual Machine.

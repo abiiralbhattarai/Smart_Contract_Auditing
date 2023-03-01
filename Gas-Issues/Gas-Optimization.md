@@ -188,14 +188,17 @@
     - uint256 bar; // better
 
 22. ## USING BOOLS FOR STORAGE INCURS OVERHEAD
+
     Use uint256(1) and uint256(2) for true/false to avoid a Gwarmaccess (100 gas) for the extra SLOAD, and to avoid Gsset (20000 gas) when changing from false to true, after having been true in the past
 
-mapping(address => bool) private \_blocklist;
-mapping(Role => bool) public isRole;
+    ```
+    mapping(address => bool) private _blocklist;
+    mapping(Role => bool) public isRole;
+    ```
 
-22. ## REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION
+23. ## REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION
 
-23. ## DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS
+24. ## DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS
 
     ```
     if (<x> == true) => if (<x>), if (<x> == false) => if (!<x>)
@@ -204,7 +207,7 @@ mapping(Role => bool) public isRole;
 
     ```
 
-24. ## FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE
+25. ## FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE
 
     If a function modifier such as onlyOwner is used, the function will revert if a normal user tries to pay the function. Marking the function as payable will lower the gas cost for legitimate callers because the compiler will not include checks for whether a payment was provided.
     The extra opcodes avoided are
@@ -212,12 +215,12 @@ mapping(Role => bool) public isRole;
 
     - function setAdmin(address admin, bool isEnabled) public onlyAdmin {}
 
-25. ## DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771
+26. ## DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771
 
     Use msg.sender if the code does not implement EIP-2771 trusted forwarder support.
     `_admins[_msgSender()] = true;`
 
-26. ## REPLACE MODIFIER WITH FUNCTION
+27. ## REPLACE MODIFIER WITH FUNCTION
 
         ```
         modifier onlyByOwnGov() {
@@ -229,7 +232,7 @@ mapping(Role => bool) public isRole;
 
         ```
 
-27. ## STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS
+28. ## STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS
 
     ```
     uint256(32), address(20), bool(1)
@@ -243,9 +246,9 @@ mapping(Role => bool) public isRole;
     =>(, , , address highestBidder, , uint256 highestBid) = auction.auction();
     ```
 
-28. ## <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
+29. ## <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
 
-29. ## USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE
+30. ## USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE
 
         ```
         function getModuleAddress(Keycode keycode*) internal view returns (address) {
@@ -262,11 +265,13 @@ mapping(Role => bool) public isRole;
 
         ```
 
-30. ## DELETING A STRUCT IS CHEAPER THAN CREATING A NEW STRUCT WITH NULL VALUES
+31. ## DELETING A STRUCT IS CHEAPER THAN CREATING A NEW STRUCT WITH NULL VALUES
 
-```
-activeProposal = ActivatedProposal(0, 0);
-delete activeProposal;
+```diff
+- activeProposal = ActivatedProposal(0, 0);
++ delete activeProposal;
+- mintRequestsPerEpoch[epochToClaim][user] = 0;
++ delete mintRequestsPerEpoch[epochToClaim][user];
 ```
 
 31. ## DUPLICATED REQUIRE()/REVERT() CHECKS SHOULD BE REFACTORED TO A MODIFIER OR FUNCTION
@@ -308,10 +313,13 @@ delete activeProposal;
 34. ## Avoid emitting a storage variable when a memory value is available
 
     When they are the same, consider emitting the memory value instead of the storage value:
-    postRevealBaseURIHash = \_postRevealBaseURIHash;
-    baseURI = \_baseURI;
-    emit URIUpdated(baseURI, postRevealBaseURIHash);
-    emit URIUpdated(\_baseURI, \_postRevealBaseURIHash);
+
+    ```diff
+    postRevealBaseURIHash = _postRevealBaseURIHash;
+    baseURI = _baseURI;
+    + emit URIUpdated(baseURI, postRevealBaseURIHash);
+    - emit URIUpdated(_baseURI, _postRevealBaseURIHash);
+    ```
 
 35. ## Unchecking arithmetics operations that can't underflow/overflow
 
@@ -334,8 +342,10 @@ delete activeProposal;
     This one:
 
     ```
-    NFTCollectionFactory.sol:203: require(\_implementation.isContract(), "NFTCollectionFactory: Implementation is not a contract");
-    NFTCollectionFactory.sol:227: require(\_implementation.isContract(), "NFTCollectionFactory: Implementation is not a contract");
+    NFTCollectionFactory.sol:203:
+    require(_implementation.isContract(),
+    "NFTCollectionFactory: Implementation is not a contract");
+    NFTCollectionFactory.sol:227: require(_implementation.isContract(), "NFTCollectionFactory: Implementation is not a contract");
 
     ```
 
@@ -401,14 +411,14 @@ delete activeProposal;
 - string constant public NAME = 'Swivel Finance';
 - string constant public VERSION = '3.0.0';
 
-* bytes32 constant public NAME = 'Swivel Finance';
-* bytes32 constant public VERSION = '3.0.0';
++ bytes32 constant public NAME = 'Swivel Finance';
++ bytes32 constant public VERSION = '3.0.0';
 ```
 
 42. ### If a variable is set in the constructor and never modified afterwards, marking it as immutable
     If a variable is set in the constructor and never modified afterwards, marking it as immutable can save a storage slot - 20,000 gas. This also saves 97 gas on every read access of the variable.
 
-```
+```diff
 - address public implementation;
 
 + address immutable implementation
@@ -418,11 +428,11 @@ delete activeProposal;
 
 ```
 
-43. #s## It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
+43. ### It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
 
 ```diff
-- for (uint256 i = 0; i < \_tokens.length; i++) {
-+ for (uint256 i; i < \_tokens.length; ++i) {
+- for (uint256 i = 0; i < _tokens.length; i++) {
++ for (uint256 i; i < _tokens.length; ++i) {
 ```
 
 44. ### Internal functions only called once can be inlined to save gas
@@ -457,3 +467,39 @@ function BitMath {
 +        return _rightSide ? closestBitRight(_integer, _bit - 1) : closestBitLeft(_integer, _bit + 1);
      }
 ```
+
+49. ### Caching global variables is more expensive than using the actual variable(use msg.sender instead of caching it)
+
+50. ### Avoid contract existence checks by using low level calls
+
+    Prior to 0.8.10 the compiler inserted extra code, including EXTCODESIZE (100 gas), to check for contract existence for external function calls. In more recent solidity versions, the compiler will not insert these checks if the external call has a return value. Similar behavior can be achieved in earlier versions by using low-level calls, since low level calls never check for contract existence
+
+51. ### Use hardcode address instead address(this)
+
+    Instead of address(this), it is more gas-efficient to pre-calculate and use the address with a hardcode.
+
+    cashProxied.revokeRole(PAUSER_ROLE, address(this));
+
+52. ### Empty blocks should be removed or emit something
+
+    The code should be refactored such that they no longer exist, or the block should do something useful, such as emitting an event or reverting.
+    constructor() {}
+
+53. ### Use assembly to write address storage values
+
+```diff
++ constructor(address _guardian) {
+-guardian = _guardian;
+
++ owner = owner_;
++   assembly {
++     sstore(entryPoint.slot, _entryPoint)
++     }
+}
+```
+
+54. ### Optimize names to save gas
+
+    Contracts most called functions could simply save gas by function ordering via Method ID. Calling a function at runtime will be cheaper if the function is positioned earlier in the order (has a relatively lower Method ID) because 22 gas are added to the cost of a function for every position that came before it. The caller can save on gas if you prioritize most called functions.
+
+    Recommendation: Find a lower method ID name for the most called functions for example Call() vs. Call1() is cheaper by 22 gas

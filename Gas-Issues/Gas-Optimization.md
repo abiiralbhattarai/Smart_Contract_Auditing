@@ -1,7 +1,11 @@
 # Gas optimization tricks
 
-| :----: | :------------------------------------------------------------------------------------ |
-| 1. | [ ++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS](# ++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS) |
+| Number | Issues                                                                                                                 |
+| :----: | :--------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS](#)                                               |
+|   2.   | [USING PRIVATE RATHER THAN PUBLIC FOR CONSTANTS, SAVES GAS](#using-private-rather-than-public-for-constants-saves-gas) |
+
+---
 
 ---
 
@@ -65,7 +69,7 @@
 
 9.  ## Use fixed-size bytes32 instead of string / bytes
 
-    - Only update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
+10. ### Only update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
 
     ```
     pragma solidity ^0.8.0;
@@ -90,7 +94,7 @@
 
     ```
 
-10. ## Use constant and immutable keywords(It is more cheaper)
+11. ## Use constant and immutable keywords(It is more cheaper)
 
     ```
     bytes32 constant MY_HASH = keccak256("abc");
@@ -98,7 +102,7 @@
 
     ```
 
-11. ## Cache storage values in memory
+12. ## Cache storage values in memory
 
     Anytime you are reading from storage more than once, it is cheaper to cache variables in memory. An SLOAD cost 100 GAS while MLOAD and MSTORE only cost 3 GAS.
 
@@ -114,9 +118,9 @@
 
     ```
 
-12. ## STATE VARIABLES SHOULD BE CACHED IN STACK VARIABLES RATHER THAN RE-READING THEM FROM STORAGE
+13. ## STATE VARIABLES SHOULD BE CACHED IN STACK VARIABLES RATHER THAN RE-READING THEM FROM STORAGE
 
-13. ## Cache external values in memory
+14. ## Cache external values in memory
 
     When making repeated external calls when the values between calls do not change, cache the values:
 
@@ -129,7 +133,7 @@
     require(controller.hasRole(controller.MANAGER_ROLE(), msg.sender));
     ```
 
-14. ## Splitting require() statements that use && saves gas
+15. ## Splitting require() statements that use && saves gas
 
     ```
     // Before
@@ -140,7 +144,7 @@
 
     ```
 
-15. ## Shorten require messages to less than 32 characters
+16. ## Shorten require messages to less than 32 characters
 
     ```
     // Before
@@ -150,11 +154,11 @@
 
     ```
 
-16. ## Use Custom Errors instead of Revert Strings to save Gas
+17. ## Use Custom Errors instead of Revert Strings to save Gas
 
     Starting from Solidity v0.8.4, there is a convenient and gas-efficient way to explain to users why an operation failed through the use of custom errors. Until now, you could already use strings to give more information about failures (e.g., revert(“Insufficient funds.”);), but they are rather expensive, especially when it comes to deploy cost, and it is difficult to use dynamic information in them.
 
-17. ## Non-strict inequalities are cheaper than strict ones
+18. ## Non-strict inequalities are cheaper than strict ones
 
         In the EVM, there is no opcode for non-strict inequalities (>=, <=) and two operations are performed (> + =.) Consider replacing >= with the strict counterpart >:
 
@@ -166,13 +170,13 @@
 
         ```
 
-18. ## Use external instead of public where possible
+19. ## Use external instead of public where possible
 
     Functions with the public visibility modifier are costlier than external. Default to using the external modifier until you need to expose it to other functions within your contract.
 
-19. ## Internal functions are cheaper than public
+20. ## Internal functions are cheaper than public
         - If a function is only callable by other functions internally, specify it as internal. Internal functions are cheaper to call than public functions.
-20. ## Skip initializing default values
+21. ## Skip initializing default values
 
     When Solidity variables are not set, they refer to a set of default values.
 
@@ -183,7 +187,7 @@
     - uint256 foo = 0; // bad
     - uint256 bar; // better
 
-21. ## USING BOOLS FOR STORAGE INCURS OVERHEAD
+22. ## USING BOOLS FOR STORAGE INCURS OVERHEAD
     Use uint256(1) and uint256(2) for true/false to avoid a Gwarmaccess (100 gas) for the extra SLOAD, and to avoid Gsset (20000 gas) when changing from false to true, after having been true in the past
 
 mapping(address => bool) private \_blocklist;
@@ -208,10 +212,10 @@ mapping(Role => bool) public isRole;
 
     - function setAdmin(address admin, bool isEnabled) public onlyAdmin {}
 
-25. ## DON’T USE \_MSGSENDER() IF NOT SUPPORTING EIP-2771
+25. ## DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771
 
     Use msg.sender if the code does not implement EIP-2771 trusted forwarder support.
-    \_admins[_msgSender()] = true;
+    `_admins[_msgSender()] = true;`
 
 26. ## REPLACE MODIFIER WITH FUNCTION
 
@@ -270,13 +274,36 @@ delete activeProposal;
 32. ## USE LOCAL VARIABLE INSTEAD OF THE STORAGE VARIABLE WHENEVER POSSIBLE
 
     ```
-    Auction memory \_auction = auction;
+    Auction memory _auction = auction;
     if (auction.settled) revert AUCTION_SETTLED();(Don’t do this)
-    if (\_auction.settled) revert AUCTION_SETTLED();(Do this)
+    if (_auction.settled) revert AUCTION_SETTLED();(Do this)
 
     ```
 
 33. ## Use Internal View Functions in Modifiers To Save Bytecode
+
+    When you add a function modifier, the code of that function is picked up and put in the function modifier in place of the `"_"` symbol. This can also be understood as ‘The function modifiers are inlined”. In normal programming languages, inlining small code is more efficient without any real drawback but Solidity is no ordinary language. In Solidity, the maximum size of a contract is restricted to 24 KB by EIP 170. If the same code is inlined multiple times, it adds up in size and that size limit can be hit easily.
+
+    Internal functions, on the other hand, are not inlined but called as separate functions. This means they are very slightly more expensive in run time but save a lot of redundant bytecode in deployment. Internal functions can also help avoid the dreaded “Stack too deep Error” as variables created in an internal function don’t share the same restricted stack with the original function, but the variables created in modifiers share the same stack limit.
+
+    Show case:
+
+    ```diff
+    - modifier onlyAuthorized() {
+    -       bool isOwner = msg.sender == IOwnable(address-(securityToken)).owner();
+    -    require(isOwner ||
+    -        securityToken.isModule(msg.sender, DATA_KEY) ||
+    -       securityToken.checkPermission(msg.sender, address(this), MANAGEDATA),
+    -        "Unauthorized"
+    -   );
+    -    _;
+    }
+    + modifier onlyAuthorized() {
+    +   _isAuthorized();
+    +    _;
+    +}
+    +function _isAuthorized() internal view {/*codes*/}
+    ```
 
 34. ## Avoid emitting a storage variable when a memory value is available
 

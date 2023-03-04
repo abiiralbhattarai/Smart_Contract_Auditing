@@ -3,9 +3,9 @@
 | Number | Issues                                                                                                                            |
 | :----: | :-------------------------------------------------------------------------------------------------------------------------------- |
 |   1.   | [Not using the latest version of OpenZeppelin from dependencies](#not-using-the-latest-version-of-openzeppelin-from-dependencies) |
-|   3.   | [Omissions in Events](#omissions-in-Events)                                                                                       |
-|   4.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                       |
-|   5.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                   |
+|   2.   | [Omissions in Events](#omissions-in-Events)                                                                                       |
+|   3.   | [Add parameter to Event-Emit](#add-parameter-to-event-emit)                                                                       |
+|   4.   | [Include return parameters in NatSpec comments](#include-return-parameters-in-natspec-comments)                                   |
 |   6.   | [NatSpec is missing](#natSpec-is-missing)                                                                                         |
 |   7.   | [Missing Time locks](#missing-time-locks)                                                                                         |
 |   8.   | [Critical Address Changes Should Use Two-step Procedure](#critical-address-changes-should-use-two-step-procedure)                 |
@@ -23,7 +23,7 @@
 |  20.   | [use order of functions](#use-order-of-functions)                                                                                 |
 |  21.   | [Mixing and Outdated compiler](#mixing-and-outdated-compiler)                                                                     |
 |  22.   | [Choose Specific Compiler Version Pragma](#choose-specific-compiler-version-pragma)                                               |
-|  23.   |                                                                                                                                   |
+|  23.   | [Avoid Setting TIme Variables Manually](#avoid-setting-time-variables-manually)                                                   |
 |  24.   |                                                                                                                                   |
 |  25.   |                                                                                                                                   |
 |  26.   |                                                                                                                                   |
@@ -158,23 +158,23 @@
     - Testing all functions is best practice in terms of security criteria.
     - Some function test coverage is not found in test files
 
-11. ## Avoid variable names that can shade
+11. ### Avoid variable names that can shade
 
     With global variable names in the form of call{value: value } , argument name similarities can shade and negatively affect code readability.
 
-12. ## Use a more recent version of Solidity
+12. ### Use a more recent version of Solidity
 
     For security, it is best practice to use the latest Solidity version.
 
-13. ## Don't Use vulnerable dependency of OpenZeppelin
+13. ### Don't Use vulnerable dependency of OpenZeppelin
 
     Recommendation: Use patched versions
 
-14. ## Lines are too long
+14. ### Lines are too long
 
     Usually lines in source code are limited to 80 characters. Today's screens are much larger so it's reasonable to stretch this in some cases. Since the files will most likely reside in GitHub, and GitHub starts using a scroll bar in all cases when the length is over 164 characters, the lines below should be split when they reach that length Reference: https://docs.soliditylang.org/en/v0.8.10/style-guide.html#maximum-line-length
 
-15. ## Empty blocks should be removed or Emit something
+15. ### Empty blocks should be removed or Emit something
 
     ```
     166:     constructor() initializer {}
@@ -182,7 +182,7 @@
 
     ```
 
-16. ## Lack of Event Emission For Critical Functions
+16. ### Lack of Event Emission For Critical Functions
 
     ```
     function updatePriorityStakingBlock(uint256 _endBlock) external onlyOwner {
@@ -196,7 +196,7 @@
 
     Recommendation: Consider adding events to functions that change critical parameters.
 
-17. ## Add missing @param information
+17. ### Add missing @param information
     Some parameters have not been commented, which reflects that the logic has been updated but not the documentation, it is advisable that developers update both at the same time to avoid the code being out of sync with the project documentation.
 
 ```diff
@@ -219,7 +219,7 @@
 
 ```
 
-18. # Named return variables not used though its defined
+18. ### Named return variables not used though its defined
 
     When Named return variable are declared they should be used inside the function instead of the return statement or if not they should be removed to avoid confusion.
 
@@ -241,7 +241,7 @@
 
     ```
 
-19. # Constant should be defined rather than using magic numbers
+19. ### Constant should be defined rather than using magic numbers
 
     It is best practice to use constant variables rather than hex/numeric literal values to make the code easier to understand and maintain, but if they are used those numbers should be well docummented.
 
@@ -260,7 +260,7 @@
     - Mitigation
       Replace magic hardcoded numbers with declared constants.
 
-20. # use order of functions
+20. ### use order of functions
 
     The solidity documentation recommends the following order for functions:
 
@@ -273,7 +273,7 @@
     - private
     - Within a grouping, place the view and pure functions last
 
-21. # Mixing and Outdated compiler
+21. ### Mixing and Outdated compiler
 
     Note that mixing pragma is not recommended. Because different compiler versions have different meanings and behaviors, it also significantly raises maintenance costs. As a result, depending on the compiler version selected for any given file, deployed contracts may have security issues
 
@@ -295,8 +295,60 @@
 
       Yul Optimizer: Prevent the incorrect removal of storage writes before calls to Yul functions that conditionally terminate the external EVM call.
 
-22. # Choose Specific Compiler Version Pragma
+22. ### Choose Specific Compiler Version Pragma
 
     Avoid floating pragmas for non-library contracts. While floating pragmas make sense for libraries to allow them to be included with multiple different versions of applications, it may be a security risk for application implementations. A known vulnerable compiler version may accidentally be selected or security tools might fall-back to an older compiler version ending up checking a different EVM compilation that is ultimately deployed on the blockchain. It is recommended to pin to a concrete compiler version,
 
     e.g. 'pragma solidity ^0.8.0;' -> 'pragma solidity 0.8.4;"
+
+23. ### Avoid Setting TIme Variables Manually
+
+    Use solidity Time Units to avoid mistakes in defining time variables.
+
+    ```diff
+    /// @dev 60 seconds in a min, 60 mins in an hour
+
+    - uint256 immutable HOUR*IN_SECONDS = 60 * 60;
+    /// @dev 24 hours in a day 7 days in a week
+    - uint256 immutable WEEK*IN_SECONDS = (3600 * 24 _ 7);
+    // @dev about 30 days in a month
+    - uint256 immutable MONTH_IN_SECONDS = (3600 _ 24 _ 7) _ 30;
+    ```
+
+    Change to :
+
+    ```diff
+    /// @dev 60 seconds in a min, 60 mins in an hour
+    + uint256 immutable HOUR_IN_SECONDS = 1 hours;
+    /// @dev 24 hours in a day 7 days in a week
+    + uint256 immutable WEEK_IN_SECONDS = 1 weeks;
+    // @dev about 30 days in a month
+    + uint256 immutable MONTH_IN_SECONDS = 30 days;
+
+    ```
+
+24. ### Use constants instead of immutable variables
+
+    ```diff
+    - uint32 immutable callbackGasLimit = 200_000;
+    /// @notice Chainlink request confirmations, left at the default
+    - uint16 immutable minimumRequestConfirmations = 3;
+    /// @notice Number of words requested in a drawing
+    - uint16 immutable wordsRequested = 1;
+    ```
+
+    ```diff
+    + uint32 constant callbackGasLimit = 200_000;
+    /// @notice Chainlink request confirmations, left at the default
+    + uint16 constant minimumRequestConfirmations = 3;
+    /// @notice Number of words requested in a drawing
+    + uint16 constant wordsRequested = 1;
+
+    ```
+25. ###  Contracts should have full test coverage
+    While 100% code coverage does not guarantee that there are no bugs, it often will catch easy-to-find bugs, and will ensure that there are fewer regressions when the code invariably has to be modified. Furthermore, in order to get full coverage, code authors will often have to re-organize their code so that it is more modular, so that each component can be tested separately, which reduces interdependencies between modules and layers, and makes for code that is easier to reason about and audit.
+
+26. ### Large or complicated code bases should implement fuzzing tests
+     Large code bases, or code with lots of inline-assembly, complicated math, or complicated interactions between multiple contracts, should implement fuzzing tests[#https://medium.com/coinmonks/smart-contract-fuzzing-d9b88e0b0a05]. Fuzzers such as Echidna require the test writer to come up with invariants which should not be violated under any circumstances, and the fuzzer tests various inputs and function calls to ensure that the invariants always hold. Even code with 100% code coverage can still have bugs due to the order of the operations a user performs, and fuzzers, with properly and extensively-written invariants, can close this testing gap significantly.
+
+

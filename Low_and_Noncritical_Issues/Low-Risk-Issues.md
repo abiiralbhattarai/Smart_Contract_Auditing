@@ -47,7 +47,7 @@
 
 # Low Risk Issues
 
-1.  ## zero address check
+1.  ### zero address check
 
     Do zero address check
 
@@ -61,7 +61,7 @@
     }
     ```
 
-2.  ## Signature Malleability of EVM's ecrecover()
+2.  ### Signature Malleability of EVM's ecrecover()
 
     ecrecover() is a very useful Solidity function that allows the smart contract to validate that incoming data is properly signed by an expected party.
 
@@ -73,20 +73,21 @@
 
     ***
 
-3.  ## Stop using this one
+3.  ### Stop using this one
 
     - Stop using v != 27 && v != 28 or v == 27 || v == 28
+    - This code is part of signature verification in contracts, where a special contract ("ecrecover precompile") takes the signature components (v,r,s) and returns an address.
 
       See this for reference :
       https://twitter.com/alexberegszaszi/status/1534461421454606336?s=20&t=H0Dv3ZT2bicx00hLWJk7Fg
 
-4.  ## DOMAIN_SEPARATOR Can Change
+4.  ### DOMAIN_SEPARATOR Can Change
 
     Description: The variable DOMAIN_SEPARATOR is assigned in the constructor and will not change after being initialized. However, if a hard fork happens after the contract deployment, the domain would become invalid on one of the forked chains due to the block.chainid has changed.
 
     Recommendation: Consider the solution from [Sushi Trident](https://github.com/sushiswap/trident/blob/concentrated/contracts/pool/concentrated/TridentNFT.sol#L47-L62).
 
-5.  ## Owner can renounce Ownership
+5.  ### Owner can renounce Ownership
 
     Description: Typically, the contract’s owner is the account that deploys the contract. As a result, the owner is able to perform certain privileged activities.
 
@@ -96,7 +97,7 @@
 
     Recommendation: We recommend to either reimplement the function to disable it or to clearly specify if it is part of the contract design.
 
-6.  ## Integer overflow by unsafe casting
+6.  ### Integer overflow by unsafe casting
 
     Keep in mind that the version of solidity used, despite being greater than 0.8, does not prevent integer overflows during casting, it only does so in mathematical operations.
 
@@ -110,9 +111,9 @@
 
     uint32(block.timestamp)
 
-7.  ## Loss of precision due to rounding
+7.  ### Loss of precision due to rounding
 
-    Due to / PRECISION, users can avoid paying fee if claimed [][] result is below PRECISION
+    Due to / PRECISION, users can avoid paying fee if claimed [ ][ ] result is below PRECISION
 
     ```
     contracts/liquid-staking/GiantMevAndFeesPool.sol:
@@ -125,7 +126,7 @@
 
     ```
 
-8.  ## Use safeTransferOwnership instead of transferOwnership function
+8.  ### Use safeTransferOwnership instead of transferOwnership function
 
     Description: transferOwnership function is used to change Ownership
 
@@ -159,7 +160,7 @@
 
     - Use [Ownable2Step.sol] (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable2Step.sol)
 
-9.  ## Missing Equivalence Checks in Setters
+9.  ### Missing Equivalence Checks in Setters
 
     Description: Setter functions are missing checks to validate if the new value being set is the same as the current value already set in the contract. Such checks will showcase mismatches between on-chain and off-chain states.
 
@@ -178,7 +179,7 @@
 
     ```
 
-10. # Named return variables not used though its defined
+10. ### Named return variables not used though its defined
 
     When Named return variable are declared they should be used inside the function instead of the return statement or if not they should be removed to avoid confusion.
 
@@ -200,7 +201,7 @@
 
     ```
 
-11. # Avoid using tx.origin
+11. ### Avoid using tx.origin
 
     tx.origin is a global variable in Solidity that returns the address of the account that sent the transaction.
 
@@ -208,7 +209,7 @@
 
     This can make it easier to create a vault on behalf of another user with an external administrator (by receiving it as an argument).
 
-12. # Lack of checks supportsInterface
+12. ### Lack of checks supportsInterface
 
     The EIP-165 standard helps detect that a smart contract implements the expected logic, prevents human error when configuring smart contract bindings, so it is recommended to check that the received argument is a contract and supports the expected interface.
 
@@ -216,12 +217,12 @@
 
       https://eips.ethereum.org/EIPS/eip-165
 
-13. # ERC20 transfer / transferFrom with not checked return value
+13. ### ERC20 transfer / transferFrom with not checked return value
 
     - Impact
       Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.
 
-14. # Prevent div by 0
+14. ### Prevent div by 0
 
     - Impact
       On several locations in the code precautions are not being taken to not divide by 0, this would revert the code.
@@ -231,11 +232,11 @@
       - uint minimumCollateral = debt _ 1 ether / oracle.getPrice(address(collateral), collateralFactorBps) _ 10000 / collateralFactorBps;//
       - uint liquidationFee = repaidDebt _ 1 ether / price _ liquidationFeeBps / 10000;
 
-15. ## Always Use non-vulnerable dependency of OpenZeppelin
+15. ### Always Use non-vulnerable dependency of OpenZeppelin
 
     - Recommendation: Use patched versions
 
-16. ## Missing sanity checks on to addresses
+16. ### Missing sanity checks on to addresses
 
 when the public/external functions require an address to as a parameter to which to send either tokens or ETH, the protocol should check that if the to address is contract then that contract should be able to manage ERC20, otherwise funds would be lost.
 
@@ -250,7 +251,7 @@ when the public/external functions require an address to as a parameter to which
 
 ```
 
-17. ## Add non-zero address checks for address arguments in constructors
+17. ### Add non-zero address checks for address arguments in constructors
 
 check address value for zero
 
@@ -266,12 +267,21 @@ check address value for zero
    }
 ```
 
-18. ## Use \_safeMint instead of \_mint
+18. ### Use `_safeMint` instead of `_mint`
 
-    According to openzepplin's ERC721, the use of \_mint is discouraged, use \_safeMint whenever possible.
+    According to openzepplin's ERC721, the use of `_mint` is discouraged, use `_safeMint` whenever possible.
 
     - https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#ERC721-_mint-address-uint256-
 
-19. ## Missing Contract-existence Checks Before Low-level Calls
+19. ### Missing Contract-existence Checks Before Low-level Calls
+
     - Low-level calls return success if there is no code present at the specified address.
     - In addition to the zero-address checks, add a check to verify that <address>.code.length > 0
+
+20. ### fulfillRandomWords must not revert
+
+    According to Chainlink's documentation, fulfillRandomWords should not revert
+
+        fulfillRandomWords must not revert If your fulfillRandomWords() implementation reverts, the VRF service will not attempt to call it a second time. Make sure your contract logic does not revert. Consider simply storing the randomness and taking more complex follow-on actions in separate contract calls made by you, your users, or an Automation Node.
+
+    - code: https://github.com/code-423n4/2022-12-forgeries/blob/main/src/VRFNFTRandomDraw.sol#L236

@@ -1,9 +1,62 @@
 # Gas optimization tricks
 
-| Number | Issues                                                                                                                 |
-| :----: | :--------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS](#)                                               |
-|   2.   | [USING PRIVATE RATHER THAN PUBLIC FOR CONSTANTS, SAVES GAS](#using-private-rather-than-public-for-constants-saves-gas) |
+| Number | Issues                                                                                                                                                                                                     |
+| :----: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS](#)                                                                                                                                   |
+|   2.   | [USING PRIVATE RATHER THAN PUBLIC FOR CONSTANTS, SAVES GAS](#using-private-rather-than-public-for-constants-saves-gas)                                                                                     |
+|   3.   | [DIVISION BY TWO SHOULD USE BIT SHIFTING](#division-by-two-should-use-bit-shifting)                                                                                                                        |
+|   4.   | [STACK VARIABLE USED AS A CHEAPER CACHE FOR A STATE VARIABLE IS ONLY USED ONCE](#stack-variable-used-as-a-cheaper-cache-for-a-state-variable-is-only-used-once)                                            |
+|   5.   | [USING CALLDATA INSTEAD OF MEMORY FOR READ-ONLY ARGUMENTS IN EXTERNAL FUNCTIONS SAVES GAS](#using-calldata-instead-of-memory-for-read-only-arguments-in-external-functions-saves-gas)                      |
+|   6.   | [USING STORAGE INSTEAD OF MEMORY FOR STRUCTS/ARRAYS SAVES GAS](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                               |
+|   7.   | [THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                     |
+|   8.   | [THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                     |
+|   9.   | [Use fixed-size bytes32 instead of string / bytes](#use-fixed-size-bytes32-instead-of-string--bytes)                                                                                                       |
+|  10.   | [Only update storage variables with the final results after all intermediate calculations](#only-update-storage-variables-with-the-final-results-after-all-intermediate-calculations)                      |
+|  11.   | [Use constant and immutable keywords(It is more cheaper)](#use-constant-and-immutable-keywordsit-is-more-cheaper)                                                                                          |
+|  12.   | [Cache storage values in memory ](#cache-storage-values-in-memory)                                                                                                                                         |
+|  13.   | [STATE VARIABLES SHOULD BE CACHED IN STACK VARIABLES RATHER THAN RE-READING THEM FROM STORAGE](#state-variables-should-be-cached-in-stack-variables-rather-than-re-reading-them-from-storage)              |
+|  14.   | [Cache external values in memory](#cache-external-values-in-memory)                                                                                                                                        |
+|  15.   | [Splitting require() statements that use && saves gas](#splitting-require-statements-that-use--saves-gas)                                                                                                  |
+|  16.   | [shorten require messages to less than 32 characters](#shorten-require-messages-to-less-than-32-characters)                                                                                                |
+|  17.   | [Use Custom Errors instead of Revert Strings to save Gas](#use-custom-errors-instead-of-revert-strings-to-save-gas)                                                                                        |
+|  18.   | [ Non-strict inequalities are cheaper than strict ones](#non-strict-inequalities-are-cheaper-than-strict-ones)                                                                                             |
+|  19.   | [Use external instead of public where possible](#use-external-instead-of-public-where-possible)                                                                                                            |
+|  20.   | [Internal functions are cheaper than public](#internal-functions-are-cheaper-than-public)                                                                                                                  |
+|  21.   | [Skip initializing default values](#skip-initializing-default-values)                                                                                                                                      |
+|  22.   | [USING BOOLS FOR STORAGE INCURS OVERHEAD](#using-bools-for-storage-incurs-overhead)                                                                                                                        |
+|  23.   | [REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION](#require-or-revert-statements-that-check-input-arguments-should-be-at-the-top-of-the-function)          |
+|  24.   | [DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS](#dont-compare-boolean-expressions-to-boolean-literals)                                                                                             |
+|  25.   | [FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE](#functions-guaranteed-to-revert-when-called-by-normal-users-can-be-marked-payable)                                      |
+|  26.   | [ON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771](#dont-use-_msgsender-if-not-supporting-eip-2771)                                                                                                      |
+|  27.   | [REPLACE MODIFIER WITH FUNCTION](#replace-modifier-with-function)                                                                                                                                          |
+|  28.   | [STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS](#stack-variable-used-as-a-cheaper-cache-for-a-state-variable-is-only-used-once)                                                                   |
+|  29.   | [The <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)](#the---1-even-more-efficient-than-pre-increment-i-jwhen-used-direct-without-in-the-for-loop) |
+|  30.   | [USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE](#use-named-returns-for-local-variables-where-it-is-possible)                                                                                  |
+|  31.   | [DUPLICATED REQUIRE()/REVERT() CHECKS SHOULD BE REFACTORED TO A MODIFIER OR FUNCTION](#duplicated-requirerevert-checks-should-be-refactored-to-a-modifier-or-function)                                     |
+|  32.   | [USE LOCAL VARIABLE INSTEAD OF THE STORAGE VARIABLE WHENEVER POSSIBLE](#use-local-variable-instead-of-the-storage-variable-whenever-possible)                                                              |
+|  33.   | [Use Internal View Functions in Modifiers To Save Bytecode](#use-internal-view-functions-in-modifiers-to-save-bytecode)                                                                                    |
+|  34.   | [avoid emitting a storage variable when a memory value is available](#avoid-emitting-a-storage-variable-when-a-memory-value-is-available)                                                                  |
+|  35.   | [Unchecking arithmetics operations that can't underflow/overflow](#unchecking-arithmetics-operations-that-cant-underflowoverflow)                                                                          |
+|  36.   | [Duplicated conditions should be refactored to a modifier or function to save deployment costs](#duplicated-conditions-should-be-refactored-to-a-modifier-or-function-to-save-deployment-costs)            |
+|  37.   | [Increments/decrements can be unchecked in for-loops](#incrementsdecrements-can-be-unchecked-in-for-loops)                                                                                                 |
+|  38.   | [Usage of uints/ints smaller than 32 bytes (256 bits) incurs overhead](#usage-of-uintsints-smaller-than-32-bytes-256-bits-incurs-overhead)                                                                 |
+|  39.   | [Multiple accesses of a mapping/array should use a local variable cache](#multiple-accesses-of-a-mappingarray-should-use-a-local-variable-cache)                                                           |
+|  40.   | [Multiple MAPPINGS CAN BE COMBINED IN A SINGLE Struct](#multiple-mappings-can-be-combined-in-a-single-struct)                                                                                              |
+|  41.   | [Bytes constant are cheaper than string constants](#bytes-constant-are-cheaper-than-string-constants)                                                                                                      |
+|  42.   | [If a variable is set in the constructor and never modified afterwards, marking it as immutable](#if-a-variable-is-set-in-the-constructor-and-never-modified-afterwards-marking-it-as-immutable)           |
+|  43.   | [Don't initialize non-constant/non-immutable variables to zero](#dont-initialize-non-constantnon-immutable-variables-to-zero)                                                                              |
+|  44.   | [Internal functions only called once can be inlined to save gas](#internal-functions-only-called-once-can-be-inlined-to-save-gas)                                                                          |
+|  45.   | [Cache the length of arrays in loops ~6 gas per iteration](#cache-the-length-of-arrays-in-loops-6-gas-per-iteration)                                                                                       |
+|  46.   | [Use selfbalance() instead of address(this).balance](#use-selfbalance-instead-of-addressthisbalance)                                                                                                       |
+|  47.   | [Use assembly to check for address(0)](#use-assembly-to-check-for-address0)                                                                                                                                |
+|  48.   | [TERNARY OPERATION IS CHEAPER THAN IF-ELSE STATEMENT](#ternary-operation-is-cheaper-than-if-else-statement)                                                                                                |
+|  49.   | [Caching global variables is more expensive than using the actual variable](#caching-global-variables-is-more-expensive-than-using-the-actual-variable)                                                    |
+|  50.   | [Avoid contract existence checks by using low level calls](#avoid-contract-existence-checks-by-using-low-level-calls)                                                                                      |
+|  51.   | [Use hardcode address instead address(this)](#use-hardcode-address-instead-addressthis)                                                                                                                    |
+|  52.   | [Empty blocks should be removed or emit something](#empty-blocks-should-be-removed-or-emit-something)                                                                                                      |
+|  53.   | [Use assembly to write address storage values](#use-assembly-to-check-for-address0)                                                                                                                        |
+|  54.   | [Optimize names to save gas](#optimize-names-to-save-gas)                                                                                                                                                  |
+|  55.   | [Use calldata instead of memory for function arguments that do not get mutated](#use-calldata-instead-of-memory-for-function-arguments-that-do-not-get-mutated)                                            |
 
 ---
 
@@ -59,7 +112,7 @@
 
     ```
 
-7.  ## <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES
+7.  ## THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES
 
         penaltyAccumulated += penaltyAmount;
 
@@ -69,30 +122,34 @@
 
 9.  ## Use fixed-size bytes32 instead of string / bytes
 
-10. ### Only update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
+10. ### Only update storage variables with the final results after all intermediate calculations
 
-    ```
+    nly update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
+
+    ````
     pragma solidity ^0.8.0;
     contract Test {
     int internal count;
     function A() public {
 
-    for (uint i = 0; i < 10; i++){
-        count++; // Writes to storage at every intermediate step
-    }
-
+        for (uint i = 0; i < 10; i++){
+            count++; // Writes to storage at every intermediate step
         }
 
-    function B() public {
-    uint j;
-    for (uint i = 0; i < 10; i++){
-    j++;
-    }
-    count = j; // Writes only the final result to storage
-    }
-    }
+            }
 
-    ```
+        function B() public {
+        uint j;
+        for (uint i = 0; i < 10; i++){
+        j++;
+        }
+        count = j; // Writes only the final result to storage
+        }
+        }
+
+        ```
+
+    ````
 
 11. ## Use constant and immutable keywords(It is more cheaper)
 
@@ -221,17 +278,18 @@
     `_admins[_msgSender()] = true;`
 
 27. ## REPLACE MODIFIER WITH FUNCTION
-If same modifier is used multiple times then it is best to replace hte modifier with the function. Modifier code is inlined, meaning that it gets added at the beginning and the end of the function it modifies. 
 
-        ```
-        modifier onlyByOwnGov() {
-        function onlyByOwnGov() private {
-        require(msg.sender == timelock*address || msg.sender == owner, "Not owner or timelock");
-        _ ;
+    If same modifier is used multiple times then it is best to replace hte modifier with the function. Modifier code is inlined, meaning that it gets added at the beginning and the end of the function it modifies.
 
-        }
+            ```
+            modifier onlyByOwnGov() {
+            function onlyByOwnGov() private {
+            require(msg.sender == timelock*address || msg.sender == owner, "Not owner or timelock");
+            _ ;
 
-        ```
+            }
+
+            ```
 
 28. ## STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS
 
@@ -247,7 +305,7 @@ If same modifier is used multiple times then it is best to replace hte modifier 
     =>(, , , address highestBidder, , uint256 highestBid) = auction.auction();
     ```
 
-29. ## <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
+29. ## The <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
 
 30. ## USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE
 
@@ -338,7 +396,7 @@ If same modifier is used multiple times then it is best to replace hte modifier 
 
 ```
 
-36. ## Duplicated conditions should be refactored to a modifier or function to save deployment costs
+36. ### Duplicated conditions should be refactored to a modifier or function to save deployment costs
 
     This one:
 
@@ -350,7 +408,7 @@ If same modifier is used multiple times then it is best to replace hte modifier 
 
     ```
 
-37. ## Increments/decrements can be unchecked in for-loops
+37. ### Increments/decrements can be unchecked in for-loops
     Consider wrapping with an unchecked block here (around 25 gas saved per instance):
     The change would be:
 
@@ -364,7 +422,7 @@ If same modifier is used multiple times then it is best to replace hte modifier 
 
 ```
 
-38. # Usage of uints/ints smaller than 32 bytes (256 bits) incurs overhead
+38. ### Usage of uints/ints smaller than 32 bytes (256 bits) incurs overhead
     When using elements that are smaller than 32 bytes, your contract’s gas usage may be higher. This is because the EVM operates on 32 bytes at a time. Therefore, if the element is smaller than that, the EVM must use more operations in order to reduce the size of the element from 32 bytes to the desired size.
 
 ```diff
@@ -374,7 +432,7 @@ If same modifier is used multiple times then it is best to replace hte modifier 
 
 ```
 
-39. # Multiple accesses of a mapping/array should use a local variable cache
+39. ### Multiple accesses of a mapping/array should use a local variable cache
 
     ```
     function executeOperation(
@@ -429,7 +487,8 @@ If same modifier is used multiple times then it is best to replace hte modifier 
 
 ```
 
-43. ### It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
+43. ### Don't initialize non-constant/non-immutable variables to zero
+    It costs more gas to initialize non-constant/non-immutable variables to zero than to let the default of zero be applied
 
 ```diff
 - for (uint256 i = 0; i < _tokens.length; i++) {
@@ -469,7 +528,9 @@ function BitMath {
      }
 ```
 
-49. ### Caching global variables is more expensive than using the actual variable(use msg.sender instead of caching it)
+49. ### Caching global variables is more expensive than using the actual variable
+
+    Caching global variables is more expensive than using the actual variable(use msg.sender instead of caching it)
 
 50. ### Avoid contract existence checks by using low level calls
 

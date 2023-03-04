@@ -221,6 +221,7 @@
     `_admins[_msgSender()] = true;`
 
 27. ## REPLACE MODIFIER WITH FUNCTION
+If same modifier is used multiple times then it is best to replace hte modifier with the function. Modifier code is inlined, meaning that it gets added at the beginning and the end of the function it modifies. 
 
         ```
         modifier onlyByOwnGov() {
@@ -503,3 +504,12 @@ function BitMath {
     Contracts most called functions could simply save gas by function ordering via Method ID. Calling a function at runtime will be cheaper if the function is positioned earlier in the order (has a relatively lower Method ID) because 22 gas are added to the cost of a function for every position that came before it. The caller can save on gas if you prioritize most called functions.
 
     Recommendation: Find a lower method ID name for the most called functions for example Call() vs. Call1() is cheaper by 22 gas
+
+55. ### Use calldata instead of memory for function arguments that do not get mutated
+
+    Mark data types as calldata instead of memory where possible. This makes it so that the data is not automatically loaded into memory. If the data passed into the function does not need to be changed (like updating values in an array), it can be passed in as calldata. The one exception to this is if the argument must later be passed into another function that takes an argument that specifies memory storage.
+
+    ```
+       function batchLiquidateTroves(address _collateral, address[] memory _troveArray) public override {
+
+    ```

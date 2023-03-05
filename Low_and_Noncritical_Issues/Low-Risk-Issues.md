@@ -1,47 +1,48 @@
 ### Low Risk Issues List
 
-| Number | Issues                                                                                                                              |
-| :----: | :---------------------------------------------------------------------------------------------------------------------------------- |
-|   1.   | [zero address check ](#zero-address-check)                                                                                          |
-|   2.   | [Signature Malleability of EVM's ecrecover()](#signature-malleability-of-evms-ecrecover)                                            |
-|   3.   | [Stop using this one](#stop-using-this-one)                                                                                         |
-|   4.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                         |
-|   5.   | [Owner can renounce Ownership](#owner-can-renounce-ownership)                                                                       |
-|   6.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                          |
-|   7.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                            |
-|   8.   | [Use safeTransferOwnership instead of transferOwnership function](#use-safetransferownership-instead-of-transferownership-function) |
-|   9.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                    |
-|  10.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                      |
-|  11.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                               |
-|  12.   | [ERC20 transfer / transferFrom with not checked return value](#erc20-transfer--transferfrom-with-not-checked-return-value)          |
-|  13.   | [Prevent div by 0](#prevent-div-by-0)                                                                                               |
-|  14.   | [Always Use non-vulnerable dependency of OpenZeppelin](#always-use-non-vulnerable-dependency-of-openzeppelin)                       |
-|  15.   |                                                                                                                                     |
-|  16.   |                                                                                                                                     |
-|  17.   |                                                                                                                                     |
-|  18.   |                                                                                                                                     |
-|  19.   |                                                                                                                                     |
-|  21.   |                                                                                                                                     |
-|  22.   |                                                                                                                                     |
-|  23.   |                                                                                                                                     |
-|  24.   |                                                                                                                                     |
-|  25.   |                                                                                                                                     |
-|  26.   |                                                                                                                                     |
-|  27.   |                                                                                                                                     |
-|  28.   |                                                                                                                                     |
-|  29.   |                                                                                                                                     |
-|  30.   |                                                                                                                                     |
-|  31.   |                                                                                                                                     |
-|  32.   |                                                                                                                                     |
-|  33.   |                                                                                                                                     |
-|  34.   |                                                                                                                                     |
-|  35.   |                                                                                                                                     |
-|  36.   |                                                                                                                                     |
-|  37.   |                                                                                                                                     |
-|  38.   |                                                                                                                                     |
-|  39.   |                                                                                                                                     |
-|  40.   |                                                                                                                                     |
-|  41.   |                                                                                                                                     |
+| Number | Issues                                                                                                                                  |
+| :----: | :-------------------------------------------------------------------------------------------------------------------------------------- |
+|   1.   | [zero address check ](#zero-address-check)                                                                                              |
+|   2.   | [Signature Malleability of EVM's ecrecover()](#signature-malleability-of-evms-ecrecover)                                                |
+|   3.   | [Stop using this one](#stop-using-this-one)                                                                                             |
+|   4.   | [DOMAIN_SEPARATOR Can Change](#domain_separator-can-change)                                                                             |
+|   5.   | [Owner can renounce Ownership](#owner-can-renounce-ownership)                                                                           |
+|   6.   | [ Integer overflow by unsafe casting](#integer-overflow-by-unsafe-casting)                                                              |
+|   7.   | [ Loss of precision due to rounding](#loss-of-precision-due-to-rounding)                                                                |
+|   8.   | [Use safeTransferOwnership instead of transferOwnership function](#use-safetransferownership-instead-of-transferownership-function)     |
+|   9.   | [ Missing Equivalence Checks in Setters](#missing-equivalence-checks-in-setters)                                                        |
+|  10.   | [Avoid using tx.origin](#avoid-using-txorigin)                                                                                          |
+|  11.   | [Lack of checks supportsInterface](#lack-of-checks-supportsinterface)                                                                   |
+|  12.   | [ERC20 transfer / transferFrom with not checked return value](#erc20-transfer--transferfrom-with-not-checked-return-value)              |
+|  13.   | [Prevent div by 0](#prevent-div-by-0)                                                                                                   |
+|  14.   | [Always Use non-vulnerable dependency of OpenZeppelin](#always-use-non-vulnerable-dependency-of-openzeppelin)                           |
+|  15.   | [Missing sanity checks on to addresses](#missing-sanity-checks-on-to-addresses)                                                         |
+|  16.   | [Add non-zero address checks for address arguments in constructors](#add-non-zero-address-checks-for-address-arguments-in-constructors) |
+|  17.   | [Use `_safeMint` instead of `_mint`](#use-_safemint-instead-of-_mint)                                                                   |
+|  18.   | [Missing Contract-existence Checks Before Low-level Calls](#missing-contract-existence-checks-before-low-level-calls)                   |
+|  19.   | [fulfillRandomWords must not revert](#fulfillrandomwords-must-not-revert)                                                               |
+|  20.   | [Don't use payable.transfer()/payable.send()](#dont-use-payabletransferpayablesend)                                                     |
+|  21.   |                                                                                                                                         |
+|  22.   |                                                                                                                                         |
+|  23.   |                                                                                                                                         |
+|  24.   |                                                                                                                                         |
+|  25.   |                                                                                                                                         |
+|  26.   |                                                                                                                                         |
+|  27.   |                                                                                                                                         |
+|  28.   |                                                                                                                                         |
+|  29.   |                                                                                                                                         |
+|  30.   |                                                                                                                                         |
+|  31.   |                                                                                                                                         |
+|  32.   |                                                                                                                                         |
+|  33.   |                                                                                                                                         |
+|  34.   |                                                                                                                                         |
+|  35.   |                                                                                                                                         |
+|  36.   |                                                                                                                                         |
+|  37.   |                                                                                                                                         |
+|  38.   |                                                                                                                                         |
+|  39.   |                                                                                                                                         |
+|  40.   |                                                                                                                                         |
+|  41.   |                                                                                                                                         |
 
 ---
 
@@ -179,29 +180,7 @@
 
     ```
 
-10. ### Named return variables not used though its defined
-
-    When Named return variable are declared they should be used inside the function instead of the return statement or if not they should be removed to avoid confusion.
-
-    ```
-    function tokensAvailableForWithdrawal(uint256 auctionId, uint128 baseAmount)
-        public
-        view
-        returns (uint128 tokensAvailable)
-    {
-        Auction storage a = idToAuction[auctionId];
-        return CommonTokenMath.tokensAvailableAtTime(
-            a.timings.vestingStartTimestamp,
-            a.timings.vestingEndTimestamp,
-            uint32(block.timestamp),
-            a.timings.cliffPercent,
-            baseAmount
-        );
-    }
-
-    ```
-
-11. ### Avoid using tx.origin
+10. ### Avoid using tx.origin
 
     tx.origin is a global variable in Solidity that returns the address of the account that sent the transaction.
 
@@ -209,7 +188,7 @@
 
     This can make it easier to create a vault on behalf of another user with an external administrator (by receiving it as an argument).
 
-12. ### Lack of checks supportsInterface
+11. ### Lack of checks supportsInterface
 
     The EIP-165 standard helps detect that a smart contract implements the expected logic, prevents human error when configuring smart contract bindings, so it is recommended to check that the received argument is a contract and supports the expected interface.
 
@@ -217,12 +196,12 @@
 
       https://eips.ethereum.org/EIPS/eip-165
 
-13. ### ERC20 transfer / transferFrom with not checked return value
+12. ### ERC20 transfer / transferFrom with not checked return value
 
     - Impact
       Not every ERC20 token follows OpenZeppelin's recommendation. It's possible (inside ERC20 standard) that a transferFrom doesn't revert upon failure but returns false.
 
-14. ### Prevent div by 0
+13. ### Prevent div by 0
 
     - Impact
       On several locations in the code precautions are not being taken to not divide by 0, this would revert the code.
@@ -232,11 +211,11 @@
       - uint minimumCollateral = debt _ 1 ether / oracle.getPrice(address(collateral), collateralFactorBps) _ 10000 / collateralFactorBps;//
       - uint liquidationFee = repaidDebt _ 1 ether / price _ liquidationFeeBps / 10000;
 
-15. ### Always Use non-vulnerable dependency of OpenZeppelin
+14. ### Always Use non-vulnerable dependency of OpenZeppelin
 
     - Recommendation: Use patched versions
 
-16. ### Missing sanity checks on to addresses
+15. ### Missing sanity checks on to addresses
 
 when the public/external functions require an address to as a parameter to which to send either tokens or ETH, the protocol should check that if the to address is contract then that contract should be able to manage ERC20, otherwise funds would be lost.
 
@@ -251,7 +230,7 @@ when the public/external functions require an address to as a parameter to which
 
 ```
 
-17. ### Add non-zero address checks for address arguments in constructors
+16. ### Add non-zero address checks for address arguments in constructors
 
 check address value for zero
 
@@ -267,21 +246,29 @@ check address value for zero
    }
 ```
 
-18. ### Use `_safeMint` instead of `_mint`
+17. ### Use `_safeMint` instead of `_mint`
 
     According to openzepplin's ERC721, the use of `_mint` is discouraged, use `_safeMint` whenever possible.
 
     - https://docs.openzeppelin.com/contracts/3.x/api/token/erc721#ERC721-_mint-address-uint256-
 
-19. ### Missing Contract-existence Checks Before Low-level Calls
+18. ### Missing Contract-existence Checks Before Low-level Calls
 
     - Low-level calls return success if there is no code present at the specified address.
     - In addition to the zero-address checks, add a check to verify that <address>.code.length > 0
 
-20. ### fulfillRandomWords must not revert
+19. ### fulfillRandomWords must not revert
 
     According to Chainlink's documentation, fulfillRandomWords should not revert
 
         fulfillRandomWords must not revert If your fulfillRandomWords() implementation reverts, the VRF service will not attempt to call it a second time. Make sure your contract logic does not revert. Consider simply storing the randomness and taking more complex follow-on actions in separate contract calls made by you, your users, or an Automation Node.
 
     - code: https://github.com/code-423n4/2022-12-forgeries/blob/main/src/VRFNFTRandomDraw.sol#L236
+
+20. ### Don't use payable.transfer()/payable.send()
+
+    The use of payable.transfer() is heavily [frowned upon](https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/) because it can lead to the locking of funds. The transfer() call requires that the recipient is either an EOA account, or is a contract that has a payable callback. For the contract case, the transfer() call only provides 2300 gas for the contract to complete its operations. This means the following cases can cause the transfer to fail:
+
+    The contract does not have a payable callback
+    The contract's payable callback spends more than 2300 gas (which is only enough to emit something)
+    The contract is called through a proxy which itself uses up the 2300 gas Use OpenZeppelin's Address.sendValue() instead

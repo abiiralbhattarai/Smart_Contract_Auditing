@@ -272,3 +272,33 @@ check address value for zero
     The contract does not have a payable callback
     The contract's payable callback spends more than 2300 gas (which is only enough to emit something)
     The contract is called through a proxy which itself uses up the 2300 gas Use OpenZeppelin's Address.sendValue() instead
+
+    ```
+    File: contracts/utils/LineLib.sol
+        48: payable(receiver).transfer(amount);
+    ```
+
+21. ### Unused/empty receive()/fallback() function
+
+    If the intention is for the Ether to be used, the function should call another function, otherwise it should revert (e.g. require(msg.sender == address(weth))). Having no access control on the function means that someone may send Ether to the contract, and have no way to get anything back out, which is a loss of funds
+
+    ```
+    receive() external payable {}
+    ```
+
+22. ### Minting tokens to the zero address should be avoided
+        Consider applying a check in the function to ensure tokens aren’t minted to the zero address.
+    ```
+        function mint(
+    72: address to,
+    73: uint256 collateral,
+    74: bytes calldata data
+    75: )
+    76: external
+    77: override
+    78: nonReentrant
+    79: returns (uint256 shares)
+    80: {
+        //other code but no check of address to
+    }
+    ```

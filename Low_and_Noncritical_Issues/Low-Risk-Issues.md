@@ -22,10 +22,10 @@
 |  18.   | [Missing Contract-existence Checks Before Low-level Calls](#missing-contract-existence-checks-before-low-level-calls)                   |
 |  19.   | [fulfillRandomWords must not revert](#fulfillrandomwords-must-not-revert)                                                               |
 |  20.   | [Don't use payable.transfer()/payable.send()](#dont-use-payabletransferpayablesend)                                                     |
-|  21.   |                                                                                                                                         |
-|  22.   |                                                                                                                                         |
-|  23.   |                                                                                                                                         |
-|  24.   |                                                                                                                                         |
+|  21.   | [Unused/empty receive()/fallback() function ](#initialize-functions-can-be-frontrun)                                                    |
+|  22.   | [Minting tokens to the zero address should be avoided](#minting-tokens-to-the-zero-address-should-be-avoided)                           |
+|  23.   | [ Use call() instead of transfer() when transferring ETH](#use-call-instead-of-transfer-when-transferring-eth)                          |
+|  24.   | [Initialize functions can be frontrun ](#initialize-functions-can-be-frontrun)                                                          |
 |  25.   |                                                                                                                                         |
 |  26.   |                                                                                                                                         |
 |  27.   |                                                                                                                                         |
@@ -85,6 +85,18 @@
 4.  ### DOMAIN_SEPARATOR Can Change
 
     Description: The variable DOMAIN_SEPARATOR is assigned in the constructor and will not change after being initialized. However, if a hard fork happens after the contract deployment, the domain would become invalid on one of the forked chains due to the block.chainid has changed.
+
+    ```
+    In Ethereum and Solidity, a domain separator is a cryptographic construct used to prevent replay attacks in smart contract interactions.
+
+    A replay attack occurs when an attacker intercepts a legitimate message sent from a user to a smart contract and replays it later, causing the contract to execute the same action multiple times. This can lead to unintended consequences, such as double-spending or the depletion of contract funds.
+
+    To prevent this type of attack, Ethereum uses a domain separator, which is a unique value that is included in every transaction sent to a smart contract. The domain separator is calculated based on several inputs, including the address of the contract, the function being called, and a nonce value that is incremented for each transaction.
+
+    When a transaction is sent to a smart contract, the domain separator is included in the data payload along with the function parameters. The contract then uses this value to generate a unique hash for the transaction, which is used to verify its authenticity and prevent replay attacks.
+
+    In Solidity, the domain separator is typically defined as a constant variable in the contract code.
+    ```
 
     Recommendation: Consider the solution from [Sushi Trident](https://github.com/sushiswap/trident/blob/concentrated/contracts/pool/concentrated/TridentNFT.sol#L47-L62).
 
@@ -302,3 +314,19 @@ check address value for zero
         //other code but no check of address to
     }
     ```
+23. ### Use call() instead of transfer() when transferring ETH
+
+    When transferring ETH, use call() instead of transfer().
+
+    The transfer() function only allows the recipient to use 2300 gas. If the recipient uses more than that, transfers will fail. In the future gas costs might change increasing the likelihood of that happening.
+
+    Keep in mind that call() introduces the risk of reentrancy. But, as long as the router follows the checks effects interactions pattern it should be fine. It's not supposed to hold any tokens anyway.
+
+    ```
+    - Don't do
+    msg.sender.transfer(delta);
+    ```
+
+24. ### Initialize functions can be frontrun
+
+    https://github.com/code-423n4/2021-08-notional-findings/issues/59

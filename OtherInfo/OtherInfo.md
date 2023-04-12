@@ -70,7 +70,7 @@
     return keccak256(abi.encodePacked(text0, text1,number));
     }
 
-    ### To prevent the collision
+5.  ### To prevent the collision
 
     we can do following things to prevent the collision
 
@@ -83,3 +83,36 @@
       }
 
     ***
+
+6.  ### Deflationary Token
+
+    Deflationary tokens use various mechanisms to reduce their supply, with coins usually destroyed through transaction fees and coin burning.
+
+7.  ### Upgradable Contracts
+
+    - Upgradable contracts don't have constructor
+
+    - we have initialize fucntion tha can be used as a constructor to initialize the variable
+    - Avoidw Initial Values in Field Declarations
+
+```diff
+- contract MyContract {
+-    uint256 public hasInitialValue = 42; // equivalent to setting in the constructor}
+
++contract MyContract is Initializable {
++   uint256 public hasInitialValue;
++  function initialize() public initializer {
++       hasInitialValue = 42; // set initial value in initializer
++   }}
+```
+
+    - It is still ok to define constant state variables, because the compiler does not reserve a storage slot for these variables, and every occurrence is replaced by the respective constant expression.
+
+```
+uint256 public constant hasInitialValue = 42;
+```
+
+    - Do not leave an implementation contract uninitialized. An uninitialized implementation contract can be taken over by an attacker, which may impact the proxy.
+
+8. ### Msg.value
+   - msg.value — The amount of wei sent with a message to a contract (wei is a denomination of ETH)

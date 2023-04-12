@@ -9,7 +9,7 @@
 |   5.   | [USING CALLDATA INSTEAD OF MEMORY FOR READ-ONLY ARGUMENTS IN EXTERNAL FUNCTIONS SAVES GAS](#using-calldata-instead-of-memory-for-read-only-arguments-in-external-functions-saves-gas)                      |
 |   6.   | [USING STORAGE INSTEAD OF MEMORY FOR STRUCTS/ARRAYS SAVES GAS](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                               |
 |   7.   | [THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                     |
-|   8.   | [THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                     |
+|   8.   | [> 0 is more expensive than != 0 for unsigned integers](#using-storage-instead-of-memory-for-structsarrays-saves-gas)                                                                                 |
 |   9.   | [Use fixed-size bytes32 instead of string / bytes](#use-fixed-size-bytes32-instead-of-string--bytes)                                                                                                       |
 |  10.   | [Only update storage variables with the final results after all intermediate calculations](#only-update-storage-variables-with-the-final-results-after-all-intermediate-calculations)                      |
 |  11.   | [Use constant and immutable keywords(It is more cheaper)](#use-constant-and-immutable-keywordsit-is-more-cheaper)                                                                                          |
@@ -27,7 +27,7 @@
 |  23.   | [REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION](#require-or-revert-statements-that-check-input-arguments-should-be-at-the-top-of-the-function)          |
 |  24.   | [DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS](#dont-compare-boolean-expressions-to-boolean-literals)                                                                                             |
 |  25.   | [FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE](#functions-guaranteed-to-revert-when-called-by-normal-users-can-be-marked-payable)                                      |
-|  26.   | [ON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771](#dont-use-_msgsender-if-not-supporting-eip-2771)                                                                                                      |
+|  26.   | [DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771](#dont-use-_msgsender-if-not-supporting-eip-2771)                                                                                                      |
 |  27.   | [REPLACE MODIFIER WITH FUNCTION](#replace-modifier-with-function)                                                                                                                                          |
 |  28.   | [STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS](#stack-variable-used-as-a-cheaper-cache-for-a-state-variable-is-only-used-once)                                                                   |
 |  29.   | [The <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)](#the---1-even-more-efficient-than-pre-increment-i-jwhen-used-direct-without-in-the-for-loop) |
@@ -58,11 +58,13 @@
 |  54.   | [Optimize names to save gas](#optimize-names-to-save-gas)                                                                                                                                                  |
 |  55.   | [Use calldata instead of memory for function arguments that do not get mutated](#use-calldata-instead-of-memory-for-function-arguments-that-do-not-get-mutated)                                            |
 
----
+| 56. | [Use selfbalance() instead of address(this).balance] (#)
 
 ---
 
-1.  ## ++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS
+---
+
+1.  ### ++I COSTS LESS GAS THAN I++, ESPECIALLY WHEN IT’S USED IN FOR-LOOPS
 
     - i++ gets compiled to something like
       j = i;
@@ -74,25 +76,25 @@
       return i;
       Long story short, i++ returns the non-incremented value, and ++i returns the incremented value
 
-2.  ## USING PRIVATE RATHER THAN PUBLIC FOR CONSTANTS, SAVES GAS
+2.  ### USING PRIVATE RATHER THAN PUBLIC FOR CONSTANTS, SAVES GAS
 
     If needed, the values can be read from the verified contract source code, or if there are multiple values there can be a single getter function that returns a tuple of the values of all currently-public constants. Saves 3406-3606 gas in deployment gas due to the compiler not having to create non-payable getter functions for deployment calldata, not having to store the bytes of the value outside of where it’s used, and not adding another entry to the method ID table
 
-3.  ## DIVISION BY TWO SHOULD USE BIT SHIFTING
+3.  ### DIVISION BY TWO SHOULD USE BIT SHIFTING
 
     <x> / 2 is the same as <x> >> 1. While the compiler uses the SHR opcode to accomplish both, the version that uses division incurs an overhead of 20 gas due to JUMPs to and from a compiler utility function that introduces checks which can be avoided by using unchecked {} around the division by two
 
-4.  ## STACK VARIABLE USED AS A CHEAPER CACHE FOR A STATE VARIABLE IS ONLY USED ONCE
+4.  ### STACK VARIABLE USED AS A CHEAPER CACHE FOR A STATE VARIABLE IS ONLY USED ONCE
 
     If the variable is only accessed once, it’s cheaper to use the state variable directly that one time, and save the 3 gas the extra stack assignment would spend
 
-5.  ## USING CALLDATA INSTEAD OF MEMORY FOR READ-ONLY ARGUMENTS IN EXTERNAL FUNCTIONS SAVES GAS
+5.  ### USING CALLDATA INSTEAD OF MEMORY FOR READ-ONLY ARGUMENTS IN EXTERNAL FUNCTIONS SAVES GAS
 
     When a function with a memory array is called externally, the abi.decode() step has to use a for-loop to copy each index of the calldata to the memory index. Each iteration of this for-loop costs at least 60 gas (i.e. 60 \* <mem_array>.length). Using calldata directly, obliviates the need for such a loop in the contract code and runtime execution. Note that even if an interface defines a function as having memory arguments, it’s still valid for implementation contracs to use calldata arguments instead.
     If the array is passed to an internal function which passes the array to another internal function where the array is modified and therefore memory is used in the external call, it’s still more gass-efficient to use calldata when the external function uses modifiers, since the modifiers may prevent the internal functions from being called. Structs have the same overhead as an array of length one
 
     ```
-    function \_unpackLegacyCommands(bytes memory executeData)
+    function _unpackLegacyCommands(bytes memory executeData)
     external
     pure
     returns (
@@ -103,7 +105,7 @@
 
     ```
 
-6.  ## USING STORAGE INSTEAD OF MEMORY FOR STRUCTS/ARRAYS SAVES GAS
+6.  ### USING STORAGE INSTEAD OF MEMORY FOR STRUCTS/ARRAYS SAVES GAS
 
     When fetching data from a storage location, assigning the data to a memory variable causes all fields of the struct/array to be read from storage, which incurs a Gcoldsload (2100 gas) for each field of the struct/array. If the fields are read from the new memory variable, they incur an additional MLOAD rather than a cheap stack read. Instead of declearing the variable with the memory keyword, declaring the variable with the storage keyword and caching any fields that need to be re-read in stack variables, will be much cheaper, only incuring the Gcoldsload for the fields actually read. The only time it makes sense to read the whole struct/array into a memory variable, is if the full struct/array is being returned by the function, is being passed to a function that requires memory, or if the array/struct is being read from another memory array/struct
 
@@ -112,19 +114,19 @@
 
     ```
 
-7.  ## THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES
+7.  ### THE <X> += <Y> COSTS MORE GAS THAN <X> = <X> + <Y> FOR STATE VARIABLES
 
         penaltyAccumulated += penaltyAmount;
 
-8.  ## > 0 is more expensive than != 0 for unsigned integers
+8.  ### > 0 is more expensive than != 0 for unsigned integers
 
     != 0 costs 6 less GAS compared to > 0 for unsigned integers in require statements with the optimizer enabled.
 
-9.  ## Use fixed-size bytes32 instead of string / bytes
+9.  ### Use fixed-size bytes32 instead of string / bytes
 
 10. ### Only update storage variables with the final results after all intermediate calculations
 
-    nly update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
+    Only update storage variables with the final results of your computation, after all intermediate calculations instead of at each step. This is because operations on storage is more expensive than operations on memory / calldata.
 
     ````
     pragma solidity ^0.8.0;
@@ -151,7 +153,7 @@
 
     ````
 
-11. ## Use constant and immutable keywords(It is more cheaper)
+11. ### Use constant and immutable keywords(It is more cheaper)
 
     ```
     bytes32 constant MY_HASH = keccak256("abc");
@@ -159,7 +161,7 @@
 
     ```
 
-12. ## Cache storage values in memory
+12. ### Cache storage values in memory
 
     Anytime you are reading from storage more than once, it is cheaper to cache variables in memory. An SLOAD cost 100 GAS while MLOAD and MSTORE only cost 3 GAS.
 
@@ -175,9 +177,9 @@
 
     ```
 
-13. ## STATE VARIABLES SHOULD BE CACHED IN STACK VARIABLES RATHER THAN RE-READING THEM FROM STORAGE
+13. ### STATE VARIABLES SHOULD BE CACHED IN STACK VARIABLES RATHER THAN RE-READING THEM FROM STORAGE
 
-14. ## Cache external values in memory
+14. ### Cache external values in memory
 
     When making repeated external calls when the values between calls do not change, cache the values:
 
@@ -190,7 +192,7 @@
     require(controller.hasRole(controller.MANAGER_ROLE(), msg.sender));
     ```
 
-15. ## Splitting require() statements that use && saves gas
+15. ### Splitting require() statements that use && saves gas
 
     ```
     // Before
@@ -201,7 +203,7 @@
 
     ```
 
-16. ## Shorten require messages to less than 32 characters
+16. ### Shorten require messages to less than 32 characters
 
     ```
     // Before
@@ -211,11 +213,11 @@
 
     ```
 
-17. ## Use Custom Errors instead of Revert Strings to save Gas
+17. ### Use Custom Errors instead of Revert Strings to save Gas
 
     Starting from Solidity v0.8.4, there is a convenient and gas-efficient way to explain to users why an operation failed through the use of custom errors. Until now, you could already use strings to give more information about failures (e.g., revert(“Insufficient funds.”);), but they are rather expensive, especially when it comes to deploy cost, and it is difficult to use dynamic information in them.
 
-18. ## Non-strict inequalities are cheaper than strict ones
+18. ### Non-strict inequalities are cheaper than strict ones
 
         In the EVM, there is no opcode for non-strict inequalities (>=, <=) and two operations are performed (> + =.) Consider replacing >= with the strict counterpart >:
 
@@ -227,13 +229,13 @@
 
         ```
 
-19. ## Use external instead of public where possible
+19. ### Use external instead of public where possible
 
     Functions with the public visibility modifier are costlier than external. Default to using the external modifier until you need to expose it to other functions within your contract.
 
-20. ## Internal functions are cheaper than public
+20. ### Internal functions are cheaper than public
         - If a function is only callable by other functions internally, specify it as internal. Internal functions are cheaper to call than public functions.
-21. ## Skip initializing default values
+21. ### Skip initializing default values
 
     When Solidity variables are not set, they refer to a set of default values.
 
@@ -244,18 +246,18 @@
     - uint256 foo = 0; // bad
     - uint256 bar; // better
 
-22. ## USING BOOLS FOR STORAGE INCURS OVERHEAD
+22. ### USING BOOLS FOR STORAGE INCURS OVERHEAD
 
     Use uint256(1) and uint256(2) for true/false to avoid a Gwarmaccess (100 gas) for the extra SLOAD, and to avoid Gsset (20000 gas) when changing from false to true, after having been true in the past
 
     ```
-    mapping(address => bool) private _blocklist;
-    mapping(Role => bool) public isRole;
+    bool public addressesSet = false;
+    bool public initialized = false;
     ```
 
-23. ## REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION
+23. ### REQUIRE() OR REVERT() STATEMENTS THAT CHECK INPUT ARGUMENTS SHOULD BE AT THE TOP OF THE FUNCTION
 
-24. ## DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS
+24. ### DON’T COMPARE BOOLEAN EXPRESSIONS TO BOOLEAN LITERALS
 
     ```
     if (<x> == true) => if (<x>), if (<x> == false) => if (!<x>)
@@ -264,7 +266,7 @@
 
     ```
 
-25. ## FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE
+25. ### FUNCTIONS GUARANTEED TO REVERT WHEN CALLED BY NORMAL USERS CAN BE MARKED PAYABLE
 
     If a function modifier such as onlyOwner is used, the function will revert if a normal user tries to pay the function. Marking the function as payable will lower the gas cost for legitimate callers because the compiler will not include checks for whether a payment was provided.
     The extra opcodes avoided are
@@ -272,12 +274,12 @@
 
     - function setAdmin(address admin, bool isEnabled) public onlyAdmin {}
 
-26. ## DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771
+26. ### DON’T USE `_MSGSENDER()` IF NOT SUPPORTING EIP-2771
 
     Use msg.sender if the code does not implement EIP-2771 trusted forwarder support.
     `_admins[_msgSender()] = true;`
 
-27. ## REPLACE MODIFIER WITH FUNCTION
+27. ### REPLACE MODIFIER WITH FUNCTION
 
     If same modifier is used multiple times then it is best to replace hte modifier with the function. Modifier code is inlined, meaning that it gets added at the beginning and the end of the function it modifies.
 
@@ -291,7 +293,7 @@
 
             ```
 
-28. ## STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS
+28. ### STATE VARIABLES CAN BE PACKED INTO FEWER STORAGE SLOTS
 
     ```
     uint256(32), address(20), bool(1)
@@ -305,9 +307,9 @@
     =>(, , , address highestBidder, , uint256 highestBid) = auction.auction();
     ```
 
-29. ## The <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
+29. ### The <x> = <x> + 1 even more efficient than pre increment ++i, j++(When used direct without in the for loop)
 
-30. ## USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE
+30. ### USE NAMED RETURNS FOR LOCAL VARIABLES WHERE IT IS POSSIBLE
 
         ```
         function getModuleAddress(Keycode keycode*) internal view returns (address) {
@@ -324,7 +326,7 @@
 
         ```
 
-31. ## DELETING A STRUCT IS CHEAPER THAN CREATING A NEW STRUCT WITH NULL VALUES
+31. ### DELETING A STRUCT IS CHEAPER THAN CREATING A NEW STRUCT WITH NULL VALUES
 
 ```diff
 - activeProposal = ActivatedProposal(0, 0);
@@ -333,9 +335,9 @@
 + delete mintRequestsPerEpoch[epochToClaim][user];
 ```
 
-31. ## DUPLICATED REQUIRE()/REVERT() CHECKS SHOULD BE REFACTORED TO A MODIFIER OR FUNCTION
+31. ### DUPLICATED REQUIRE()/REVERT() CHECKS SHOULD BE REFACTORED TO A MODIFIER OR FUNCTION
 
-32. ## USE LOCAL VARIABLE INSTEAD OF THE STORAGE VARIABLE WHENEVER POSSIBLE
+32. ### USE LOCAL VARIABLE INSTEAD OF THE STORAGE VARIABLE WHENEVER POSSIBLE
 
     ```
     Auction memory _auction = auction;
@@ -344,7 +346,7 @@
 
     ```
 
-33. ## Use Internal View Functions in Modifiers To Save Bytecode
+33. ### Use Internal View Functions in Modifiers To Save Bytecode
 
     When you add a function modifier, the code of that function is picked up and put in the function modifier in place of the `"_"` symbol. This can also be understood as ‘The function modifiers are inlined”. In normal programming languages, inlining small code is more efficient without any real drawback but Solidity is no ordinary language. In Solidity, the maximum size of a contract is restricted to 24 KB by EIP 170. If the same code is inlined multiple times, it adds up in size and that size limit can be hit easily.
 
@@ -369,7 +371,7 @@
     +function _isAuthorized() internal view {/*codes*/}
     ```
 
-34. ## Avoid emitting a storage variable when a memory value is available
+34. ### Avoid emitting a storage variable when a memory value is available
 
     When they are the same, consider emitting the memory value instead of the storage value:
 
@@ -380,7 +382,7 @@
     - emit URIUpdated(_baseURI, _postRevealBaseURIHash);
     ```
 
-35. ## Unchecking arithmetics operations that can't underflow/overflow
+35. ### Unchecking arithmetics operations that can't underflow/overflow
 
     We never want behavior that leads to over/underflow\*. The reason the "unchecked" keyword exists is to allow Solidity developers to write more efficient programs. The default "checked" behavior costs more gas when calculating, because under-the-hood those checks are implemented as a series of opcodes that, prior to performing the actual arithmetic, check for under/overflow and revert if it is detected. So if you're a Solidity developer who needs to do some math in 0.8.0 or greater, and you can prove that there is no possible way for your arithmetic to under/overflow (maybe because you have your own "if" statement which checks that the numbers being added are never greater than, say, 100), then you can surround the arithmetic in an "unchecked" block.
 
@@ -444,7 +446,7 @@
 
     ```
 
-40. # Multiple MAPPINGS CAN BE COMBINED IN A SINGLE Struct
+40. ### Multiple MAPPINGS CAN BE COMBINED IN A SINGLE Struct
 
 ```diff
 - mapping (address => uint256) public withdrawals;
@@ -574,3 +576,7 @@ function BitMath {
        function batchLiquidateTroves(address _collateral, address[] memory _troveArray) public override {
 
     ```
+
+56. ### Use selfbalance() instead of address(this).balance
+    You can use selfbalance() instead of address(this).balance when getting your contract's balance of ETH to save gas. Additionally, you can use balance(address) instead of address.balance() when getting an external contract's balance of ETH.
+    Saves 15 gas when checking internal balance, 6 for external

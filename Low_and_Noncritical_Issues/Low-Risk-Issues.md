@@ -26,7 +26,7 @@
 |  22.   | [Minting tokens to the zero address should be avoided](#minting-tokens-to-the-zero-address-should-be-avoided)                           |
 |  23.   | [ Use call() instead of transfer() when transferring ETH](#use-call-instead-of-transfer-when-transferring-eth)                          |
 |  24.   | [Initialize functions can be frontrun ](#initialize-functions-can-be-frontrun)                                                          |
-|  25.   |                                                                                                                                         |
+|  25.   | [Put cap on fees](#put-cap-on-fees)                                                                                                     |
 |  26.   |                                                                                                                                         |
 |  27.   |                                                                                                                                         |
 |  28.   |                                                                                                                                         |
@@ -327,6 +327,33 @@ check address value for zero
     msg.sender.transfer(delta);
     ```
 
+    - Article to support: https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
+
 24. ### Initialize functions can be frontrun
 
     https://github.com/code-423n4/2021-08-notional-findings/issues/59
+
+25. ### Put cap on fees
+
+    - There should be enforcement that fee can exceed only some value, if not done there might be DOS attack as fee can be kept extremly high.
+      https://code4rena.com/reports/2022-05-rubicon/#m-14-no-cap-on-fees-can-result-in-a-dos-in-bathtokenwithdraw
+
+26. ### Contract should have both revoke and approve for different roles
+
+    - https://code4rena.com/reports/2022-05-rubicon/#m-20-strategists-cant-be-removed
+
+27. ### Multiple Unsafe Arithmetic Operations
+
+    - https://github.com/code-423n4/2022-05-rubicon-findings/issues/443
+
+28. ### Token with fee is not considered
+
+    - https://code4rena.com/reports/2022-10-paladin/#13-tokens-with-fee-on-transfer-are-not-supported
+
+29. ### There should be limit on fee that users need to pay
+    - https://github.com/sherlock-audit/2022-09-harpie-judging/blob/main/008-M/1-report.md
+
+30. ### StakingRewards: recoverERC20() can be used as a backdoor by the owner to retrieve rewardsToken 
+    - https://github.com/code-423n4/2022-09-y2k-finance-findings/issues/49
+
+

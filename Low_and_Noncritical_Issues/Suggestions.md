@@ -35,4 +35,10 @@
 
     - https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.sol
 
+4. ### You can explain the operation of critical functions in NatSpec with an infographic.
+An example project;
+https://etherscan.io/address/0xe87a68de82204bfa63e4d626d4c5194481cf3b59#code#F1#L244
+
+
+
 ---

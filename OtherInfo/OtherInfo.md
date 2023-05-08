@@ -115,4 +115,8 @@ uint256 public constant hasInitialValue = 42;
     - Do not leave an implementation contract uninitialized. An uninitialized implementation contract can be taken over by an attacker, which may impact the proxy.
 
 8. ### Msg.value
+
    - msg.value — The amount of wei sent with a message to a contract (wei is a denomination of ETH)
+
+9. ### Rebase Token
+   - A rebase token, also known as an elastic token, is a kind of cryptocurrency where the supply is algorithmically adjusted to control price.

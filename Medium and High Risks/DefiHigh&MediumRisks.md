@@ -197,3 +197,7 @@ be addressed.
 
 38. ### Check The Dos Attack
     - https://github.com/code-423n4/2022-12-tessera-findings/issues/25
+
+39. ### Lender is able to seize the collateral by changing the loan parameters and also oracle manuplation
+    https://github.com/code-423n4/2022-04-abranft-findings/issues/51
+    https://github.com/code-423n4/2022-04-abranft-findings/issues/37

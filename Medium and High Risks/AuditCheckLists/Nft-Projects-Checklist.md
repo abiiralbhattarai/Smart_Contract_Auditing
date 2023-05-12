@@ -47,6 +47,7 @@
    36. Using suicide
    37. Using throw
    38. Using inline assembly
+   39. Support CEI pattern and check rentrancy in safemint()
 2. ### Check whether there is address zero check or not for recepients
 
    - https://github.com/code-423n4/2022-08-foundation-findings/issues/31

@@ -83,6 +83,7 @@
       - https://github.com/code-423n4/2022-09-y2k-finance-findings/issues/281
    3. Check the withdraw and deposit mechanism properly
    4. Check the sinature replay attack possiblity ( If signature is involved)
+   5. Check the proper withdrawl logic for all
 
 9. ### If vault is involved
 
@@ -132,3 +133,40 @@
 18. ### always update the success and required logic before external call to prevent rentrancy
 
 - https://github.com/code-423n4/2022-12-tessera-findings/issues/8
+
+19. ### Make sure the conract has receive and fallback function if it receiving back the eth from vault
+
+- check whether the contract which tends to receive or getback the funds have receive and fallback function
+  implemented.
+- like receiving excess fund from vault.
+- https://github.com/code-423n4/2022-11-stakehouse-findings/issues/74
+
+20. ### Return value of low-level .call() should be checked
+
+- Low-level primitive .call() doesn't revert in caller's context when the callee reverts. If its return
+  value is not checked, it can lead the caller to falsely believe that the call was successful. Receiver.sol uses
+  .call() to transfer the native token to receiver. If receiver reverts, this can lead to locked ETH in Receiver
+  contract.
+
+Recommendation: Check the return value and revert if false is returned.
+
+```diff
+- receiver.call{ value: amount }("");
++ (bool success, ) = receiver.call{ value: amount }("");
++ require(success)
+```
+
+21. ### Check the authorization in Critical Functions:
+
+- Anyone might be able to call the important function that may lead to the catastropic situation
+
+22. ### Check the room for collateral and price fluctuation in lending and borrowing
+- The lender should only be able to seize the collateral if:
+
+the borrower didn't repay in time
+the collateral loses too much of its value
+
+- Users may be liquidated right after taking maximal debt
+- check oracle address is equal or not
+- https://github.com/code-423n4/2022-12-backed-findings/issues/190
+- https://github.com/code-423n4/2022-04-abranft-findings/issues/37

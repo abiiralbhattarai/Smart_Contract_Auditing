@@ -12,3 +12,4 @@
 10. ### Borrower Repayment Only Partially Credited
 11. ### Ensure states are updated while minting
 12. ### Ensure States are updated properly in reward distribution
+13. ### Freshness of oracle data
